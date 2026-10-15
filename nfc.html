@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NFC Card Writer</title>
+  <meta name="theme-color" content="#BA0C2F">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <!-- Writes this card's URL to an NFC tag with Web NFC (Chrome on Android). Deployed with the card at /nfc.html. -->
+  <style>
+    :root {
+      --accent: #BA0C2F; --bg: #f6f3ef; --surface: #fff; --ink: #18130f; --muted: #6c645d; --line: #e4ddd6;
+      --ok: #1f7a4d; --warn: #9a5b00; --err: #b3261e;
+      font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #121012; --surface: #1c191b; --ink: #f2eeea; --muted: #a59d97; --line: #322d30; --ok: #5bd39a; --warn: #f0b35a; --err: #ff8a80; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); min-height: 100dvh; }
+    [hidden] { display: none !important; }
+    main { max-width: 480px; margin: 0 auto; padding: 24px 16px calc(32px + env(safe-area-inset-bottom)); display: grid; gap: 14px; }
+    h1 { margin: 0; font-size: 26px; letter-spacing: -.01em; }
+    .sub { margin: 0; color: var(--muted); }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 10px; }
+    label { font-size: 13px; font-weight: 600; display: grid; gap: 6px; }
+    input[type=url], input[type=text] { width: 100%; font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; }
+    input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 600 16px/1 inherit; font-family: inherit; cursor: pointer; text-decoration: none; }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn.danger { color: var(--err); border-color: color-mix(in srgb, var(--err) 40%, var(--line)); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .tap { position: relative; width: 210px; height: 210px; margin: 8px auto; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: #fff; border: 0; cursor: pointer; font: 700 18px/1.2 inherit; font-family: inherit; box-shadow: 0 20px 40px -18px color-mix(in srgb, var(--accent) 70%, transparent); }
+    .tap svg { width: 64px; height: 64px; display: block; margin: 0 auto 6px; }
+    .tap::before, .tap::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--accent); opacity: 0; }
+    .tap.waiting::before { animation: ring 1.6s ease-out infinite; }
+    .tap.waiting::after { animation: ring 1.6s ease-out .8s infinite; }
+    .tap.done { background: var(--ok); }
+    .tap.failed { background: var(--err); }
+    @keyframes ring { from { transform: scale(1); opacity: .7; } to { transform: scale(1.45); opacity: 0; } }
+    .status { text-align: center; min-height: 48px; margin: 0; font-weight: 600; }
+    .status small { display: block; font-weight: 400; color: var(--muted); }
+    .count { text-align: center; font-size: 13px; color: var(--muted); margin: -6px 0 0; }
+
+    details { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+    summary { cursor: pointer; font-weight: 600; }
+    details[open] summary { margin-bottom: 10px; }
+    .switch { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 15px; font-weight: 500; }
+    .switch input { width: 22px; height: 22px; accent-color: var(--accent); }
+    .note { margin: 0; font-size: 14px; color: var(--muted); }
+    .warn { padding: 12px 14px; border-radius: 12px; background: color-mix(in srgb, var(--warn) 14%, transparent); color: var(--warn); font-size: 14px; }
+    ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+    code { font: 13px ui-monospace, Menlo, monospace; word-break: break-all; }
+    .qr { width: 200px; margin: 0 auto; background: #fff; padding: 10px; border-radius: 12px; }
+    .qr svg { display: block; width: 100%; height: auto; }
+    .readout { font-size: 14px; display: grid; gap: 4px; }
+    .readout b { font-weight: 600; }
+    .match { color: var(--ok); } .nomatch { color: var(--err); }
+    footer { text-align: center; color: var(--muted); font-size: 13px; }
+    footer strong { color: var(--accent); }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Program your NFC card</h1>
+    <p class="sub">Write your GSA Connect link onto any NFC tag, sticker or card (NTAG213/215/216). Anyone who taps it opens your card.</p>
+  </header>
+
+  <section class="panel">
+    <label>Link to write
+      <input type="url" id="url" inputmode="url" placeholder="https://you.github.io/card/" autocomplete="off">
+    </label>
+    <p class="note" id="urlNote"></p>
+  </section>
+
+  <!-- Supported: Chrome on Android -->
+  <section id="writer" hidden>
+    <button class="tap" id="tap" type="button" aria-live="polite">
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8.3a6 6 0 0 1 0 7.4M9.5 5.5a10 10 0 0 1 0 13M13 3a14 14 0 0 1 0 18"/><circle cx="3" cy="12" r="1" fill="currentColor"/></svg>
+        <span id="tapLabel">Write to tag</span>
+      </span>
+    </button>
+    <p class="status" id="status" role="status"></p>
+    <p class="count" id="count" hidden></p>
+    <div class="row">
+      <button class="btn" id="cancel" type="button" hidden>Cancel</button>
+      <button class="btn" id="verify" type="button">Read / verify a tag</button>
+    </div>
+    <div class="panel readout" id="readout" hidden></div>
+
+    <details>
+      <summary>Event mode &amp; advanced</summary>
+      <div style="display:grid;gap:14px">
+        <label class="switch">Batch mode: keep writing tag after tag<input type="checkbox" id="batch"></label>
+        <p class="note">For GSA tabling: write the same link (e.g. the GSA Connect gallery) to a stack of cards, or switch the link between people.</p>
+        <hr style="border:0;border-top:1px solid var(--line);margin:0">
+        <div class="warn"><b>Locking is permanent.</b> A locked tag can never be rewritten. Your card URL stays the same forever (you edit <code>card.json</code>, not the tag), so locking is safe once the link is final.</div>
+        <label>Type LOCK to enable <input type="text" id="lockConfirm" autocomplete="off" autocapitalize="characters"></label>
+        <button class="btn danger" id="lock" type="button" disabled>Lock next tag (read-only)</button>
+      </div>
+    </details>
+  </section>
+
+  <!-- iPhone / iPad -->
+  <section class="panel" id="ios" hidden>
+    <strong>iPhone can't write tags from a web page</strong>
+    <p class="note">Apple doesn't allow Web NFC in Safari. iPhones <em>read</em> these tags fine, so writing just takes a free app:</p>
+    <ol>
+      <li>Install <b>NFC Tools</b> (free) from the App Store.</li>
+      <li>Tap <b>Write → Add a record → URL/URI</b>.</li>
+      <li>Paste your link (copy it below) and tap <b>OK → Write</b>.</li>
+      <li>Hold the top edge of your iPhone to the tag.</li>
+    </ol>
+    <button class="btn primary" id="copy" type="button">Copy my link</button>
+    <p class="note">Or open this page in <b>Chrome on any Android phone</b> to write directly.</p>
+  </section>
+
+  <!-- Desktop / unsupported -->
+  <section class="panel" id="desktop" hidden>
+    <strong>Open this on an Android phone</strong>
+    <p class="note">Computers don't have NFC writers that browsers can use. Scan this code with an Android phone and open it in Chrome:</p>
+    <div class="qr" id="pageQr"></div>
+    <p class="note" style="text-align:center"><code id="pageUrl"></code></p>
+    <p class="note">On iPhone? Use the free <b>NFC Tools</b> app: <i>Write → Add a record → URL</i>, then paste your link.</p>
+  </section>
+
+  <footer>GSA Connect · Powered by <strong id="powered">ScholarTap</strong></footer>
+</main>
+
+<script src="js/vendor/qrcode.js"></script>
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const urlEl = $("#url"), status = $("#status"), tap = $("#tap"), tapLabel = $("#tapLabel");
+  const supported = "NDEFReader" in window;
+  const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isMobile = isIOS || /Android|Mobile/i.test(navigator.userAgent);
+  let controller = null, written = 0;
+
+  const say = (main, small = "") => { status.innerHTML = `${main}${small ? `<small>${small}</small>` : ""}`; };
+  const state = (cls, label) => { tap.className = "tap " + (cls || ""); tapLabel.textContent = label; };
+  const buzz = (p) => navigator.vibrate?.(p);
+
+  // Prefill from ?url=…, then this card's card.json, else the folder this page lives in.
+  const params = new URLSearchParams(location.search);
+  const here = location.href.split(/[?#]/)[0].replace(/nfc\.html$/, "");
+  urlEl.value = params.get("url") || "";
+  fetch("card.json", { cache: "no-cache" }).then((r) => r.ok ? r.json() : null).then((card) => {
+    if (!card) { if (!urlEl.value) urlEl.placeholder = "https://you.github.io/card/"; return; }
+    if (!urlEl.value) urlEl.value = (card.siteUrl || "").trim() || here;
+    if (card.poweredBy?.name) $("#powered").textContent = card.poweredBy.name;
+    $("#urlNote").textContent = card.name ? `This is ${card.name}'s card link.` : "";
+  }).catch(() => {});
+
+  function validUrl() {
+    try { const u = new URL(urlEl.value.trim()); if (!/^https?:$/.test(u.protocol)) throw 0; return u.href; }
+    catch { say("Enter a full link starting with https://"); urlEl.focus(); return null; }
+  }
+  function friendly(err) {
+    if (err.name === "AbortError") return ["Cancelled"];
+    if (err.name === "NotAllowedError") return ["NFC permission denied", "Allow NFC for this site in Chrome settings, and make sure NFC is on in Android settings."];
+    if (err.name === "NotSupportedError") return ["NFC is off or unavailable", "Turn on NFC in Android settings → Connected devices."];
+    if (err.name === "NetworkError") return ["Tag moved too soon", "Hold the tag still against the phone for a second."];
+    return ["Couldn't write the tag", err.message || String(err)];
+  }
+
+  async function write() {
+    const url = validUrl(); if (!url) return;
+    controller = new AbortController();
+    $("#cancel").hidden = false; state("waiting", "Hold tag to phone…");
+    say("Ready. Touch the tag to the back of your phone", url.replace(/^https?:\/\//, ""));
+    try {
+      const ndef = new NDEFReader();
+      await ndef.write({ records: [{ recordType: "url", data: url }] }, { overwrite: true, signal: controller.signal });
+      written++; buzz([60, 40, 60]); state("done", "Written ✓");
+      say("Tag programmed!", "Tap it with any phone to test.");
+      $("#count").hidden = written < 2 && !$("#batch").checked; $("#count").textContent = `${written} tag${written === 1 ? "" : "s"} written this session`;
+      if ($("#batch").checked) setTimeout(write, 1200);
+      else setTimeout(() => state("", "Write another"), 2200);
+    } catch (err) {
+      const [m, s] = friendly(err); buzz(200);
+      state(err.name === "AbortError" ? "" : "failed", err.name === "AbortError" ? "Write to tag" : "Try again"); say(m, s);
+    } finally { if (!$("#batch").checked) $("#cancel").hidden = true; }
+  }
+
+  async function verify() {
+    controller?.abort(); controller = new AbortController();
+    $("#cancel").hidden = false; state("waiting", "Hold tag to phone…"); say("Touch a tag to read it");
+    try {
+      const ndef = new NDEFReader();
+      await ndef.scan({ signal: controller.signal });
+      ndef.onreadingerror = () => say("Couldn't read that tag", "It may be empty or not NDEF-formatted. Try writing it.");
+      ndef.onreading = ({ message, serialNumber }) => {
+        const dec = new TextDecoder();
+        const urls = message.records.filter((r) => r.recordType === "url" || r.recordType === "absolute-url").map((r) => dec.decode(r.data));
+        const want = urlEl.value.trim();
+        const ok = urls.some((u) => u.replace(/\/$/, "") === want.replace(/\/$/, ""));
+        $("#readout").hidden = false;
+        $("#readout").innerHTML = `<div><b>Serial</b> <code>${serialNumber || "n/a"}</code></div>
+          <div><b>Records</b> ${message.records.length}</div>
+          <div><b>Link</b> <code>${urls[0] || "(no link record)"}</code></div>
+          <div class="${ok ? "match" : "nomatch"}">${ok ? "✓ Matches the link above" : "✗ Doesn't match the link above"}</div>`;
+        buzz(60); state(ok ? "done" : "", ok ? "Verified ✓" : "Write to tag"); say(ok ? "Tag verified" : "Tag read", "");
+        controller.abort(); $("#cancel").hidden = true;
+      };
+    } catch (err) { const [m, s] = friendly(err); state("", "Write to tag"); say(m, s); $("#cancel").hidden = true; }
+  }
+
+  async function lock() {
+    if ($("#lockConfirm").value.trim().toUpperCase() !== "LOCK") return;
+    if (!confirm("Lock the next tag you touch? This can't be undone.")) return;
+    controller = new AbortController(); $("#cancel").hidden = false;
+    state("waiting", "Hold tag to lock…"); say("Touch the tag you want to make read-only");
+    try {
+      const ndef = new NDEFReader();
+      if (!ndef.makeReadOnly) throw Object.assign(new Error("This Chrome version can't lock tags. Use the NFC Tools app → Other → Lock tag."), { name: "Unsupported" });
+      await ndef.makeReadOnly({ signal: controller.signal });
+      buzz([60, 40, 60]); state("done", "Locked 🔒"); say("Tag locked", "It will always open this link.");
+    } catch (err) { const [m, s] = friendly(err); state("failed", "Write to tag"); say(m, s); }
+    finally { $("#cancel").hidden = true; $("#lockConfirm").value = ""; $("#lock").disabled = true; }
+  }
+
+  function qr(el, text) {
+    if (typeof qrcode !== "function") return;
+    const q = qrcode(0, "M"); q.addData(text); q.make();
+    const n = q.getModuleCount(); let d = "";
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c} ${r}h1v1h-1z`;
+    el.innerHTML = `<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges" role="img" aria-label="QR code for this page"><path d="${d}"/></svg>`;
+  }
+
+  if (supported) {
+    $("#writer").hidden = false; say("", "");
+    tap.onclick = () => { if (!tap.classList.contains("waiting")) write(); };
+    $("#verify").onclick = verify;
+    $("#cancel").onclick = () => { $("#batch").checked = false; controller?.abort(); };
+    $("#lockConfirm").oninput = (e) => { $("#lock").disabled = e.target.value.trim().toUpperCase() !== "LOCK"; };
+    $("#lock").onclick = lock;
+  } else if (isIOS) {
+    $("#ios").hidden = false;
+    $("#copy").onclick = async () => {
+      try { await navigator.clipboard.writeText(urlEl.value.trim()); $("#copy").textContent = "Copied ✓"; }
+      catch { urlEl.select(); }
+    };
+  } else {
+    $("#desktop").hidden = false;
+    const page = location.href.split("#")[0];
+    $("#pageUrl").textContent = page; qr($("#pageQr"), page);
+    if (isMobile) $("#desktop strong").textContent = "This browser can't write NFC: open this page in Chrome on Android";
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en" class="gc-loading">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>GSA Connect</title>
+  <meta name="theme-color" content="#FBF7F0">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/vendor/qrcode.js" defer></script>
+  <script src="js/card.js" defer></script>
+</head>
+<body>
+  <!-- TEMPLATE: Scholar — research-first academic homepage. Edit card.json, not this file. -->
+  <main class="page">
+    <p class="kicker"><span data-field="brand.org"></span> · <span data-field="brand.cardName"></span></p>
+
+    <header class="masthead">
+      <div class="portrait">
+        <img data-src="photo" alt="">
+        <span class="initials" data-initials hidden></span>
+      </div>
+      <div>
+        <h1 data-field="name"></h1>
+        <p class="byline"><span data-field="title"></span><span class="pron" data-field="pronouns"></span></p>
+        <p class="affil" data-join=", " data-fields="department,organization"></p>
+        <p class="gsa" data-field="gsaRole"></p>
+      </div>
+    </header>
+
+    <p class="lede" data-field="headline"></p>
+
+    <nav class="toolbar" aria-label="Contact">
+      <a class="tool primary" data-href="cv" target="_blank"><span data-icon="cv"></span>CV <small>PDF</small></a>
+      <a class="tool" href="#" data-action="save-contact"><span data-icon="contact"></span>Save contact</a>
+      <a class="tool" data-href="email" data-prefix="mailto:"><span data-icon="email"></span>Email</a>
+      <a class="tool" href="#" data-action="share"><span data-icon="share"></span>Share</a>
+    </nav>
+
+    <section data-section="bio">
+      <h2><span>§1</span> About</h2>
+      <p data-field="bio"></p>
+    </section>
+
+    <section data-section="researchInterests">
+      <h2><span>§2</span> Research interests</h2>
+      <ul class="interests" data-list="researchInterests"><template><li data-item="."></li></template></ul>
+    </section>
+
+    <section data-section="publications">
+      <h2><span>§3</span> Selected publications</h2>
+      <ol class="pubs" data-list="publications">
+        <template>
+          <li>
+            <span class="pub-year" data-item="year"></span>
+            <div>
+              <a class="pub-title" data-item-href="url" data-item="title"></a>
+              <p class="pub-authors" data-item="authors"></p>
+              <p class="pub-venue" data-item="venue"></p>
+            </div>
+          </li>
+        </template>
+      </ol>
+    </section>
+
+    <section data-section="projects">
+      <h2><span>§4</span> Projects &amp; tools</h2>
+      <div class="projects" data-list="projects">
+        <template>
+          <a class="project" data-item-href="url">
+            <strong data-item="title"></strong>
+            <span data-item="description"></span>
+          </a>
+        </template>
+      </div>
+    </section>
+
+    <div class="cols">
+      <section data-section="education">
+        <h2><span>§5</span> Education</h2>
+        <ul class="plain" data-list="education">
+          <template><li><strong data-item="degree"></strong><span data-item="school"></span><em data-item="years"></em></li></template>
+        </ul>
+      </section>
+      <section data-section="awards">
+        <h2><span>§6</span> Honours</h2>
+        <ul class="plain" data-list="awards">
+          <template><li><strong data-item="title"></strong><em data-item="year"></em></li></template>
+        </ul>
+      </section>
+    </div>
+
+    <section data-section="links">
+      <h2><span>§7</span> Elsewhere</h2>
+      <ul class="elsewhere" data-list="links">
+        <template><li><a data-item-href="url"><span data-item-icon="icon"></span><span data-item="label"></span></a></li></template>
+      </ul>
+    </section>
+
+    <section class="colophon">
+      <div class="qr" data-qr></div>
+      <div>
+        <h2>Connect</h2>
+        <p>Scan, tap, or visit <a href="#" data-action="copy-link" class="url" data-card-url></a></p>
+        <p class="contact-line"><a data-href="email" data-prefix="mailto:" data-field="email"></a><a data-href="phone" data-prefix="tel:" data-field="phone"></a></p>
+        <div class="wallet" data-wallet-group hidden>
+          <a class="wbtn" data-wallet="apple" hidden><span data-icon="apple"></span><span><small>Add to</small>Apple Wallet</span></a>
+          <a class="wbtn" data-wallet="google" hidden><span data-icon="wallet"></span><span><small>Save to</small>Google Wallet</span></a>
+          <a class="wbtn" data-wallet="samsung" hidden><span data-icon="wallet"></span><span><small>Add to</small>Samsung Wallet</span></a>
+        </div>
+      </div>
+    </section>
+
+    <footer><a class="powered" data-powered>Powered by <strong>ScholarTap</strong></a></footer>
+  </main>
+</body>
+</html>

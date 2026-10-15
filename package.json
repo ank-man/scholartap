@@ -1,0 +1,24 @@
+{
+  "name": "gsa-connect",
+  "version": "1.0.0",
+  "private": true,
+  "description": "UGA GSA Connect: one link to set up and host your digital business card. Powered by ScholarTap.",
+  "type": "module",
+  "scripts": {
+    "setup": "node scripts/dev.mjs --open app/",
+    "dev": "node scripts/dev.mjs --open",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/build.mjs && node scripts/dev.mjs dist --open",
+    "template": "node scripts/template.mjs",
+    "catalog": "node kit/catalog.mjs"
+  },
+  "dependencies": {
+    "jose": "^5.9.6",
+    "jsonwebtoken": "^9.0.2",
+    "passkit-generator": "^3.3.1",
+    "qrcode": "^1.5.4"
+  },
+  "engines": {
+    "node": ">=20.11"
+  }
+}

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" class="gc-loading">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>GSA Connect</title>
+  <meta name="theme-color" content="#f3efe7">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/vendor/qrcode.js" defer></script>
+  <script src="js/card.js" defer></script>
+</head>
+<body>
+  <!-- LAYOUT: Portfolio — work-first, editorial. Add "image" to projects in card.json for photo tiles. -->
+  <main class="pf">
+    <header class="mast">
+      <p class="eyebrow"><span data-field="brand.orgShort"></span> Connect — <span data-field="department"></span></p>
+      <h1 data-field="name"></h1>
+      <div class="mast-row">
+        <div class="avatar"><img data-src="photo" alt=""><span class="initials" data-initials hidden></span></div>
+        <div>
+          <p class="role" data-field="title"></p>
+          <p class="meta" data-join=" · " data-fields="pronouns,location"></p>
+          <p class="gsa" data-field="gsaRole"></p>
+        </div>
+      </div>
+      <p class="statement" data-field="headline"></p>
+      <nav class="acts">
+        <a class="act solid" href="#" data-action="save-contact">Save contact</a>
+        <a class="act" data-href="cv" target="_blank">CV ↗</a>
+        <a class="act" data-href="email" data-prefix="mailto:">Email</a>
+        <a class="act" href="#" data-action="share">Share</a>
+      </nav>
+    </header>
+
+    <section data-section="projects">
+      <h2><span>01</span> Selected work</h2>
+      <div class="works" data-list="projects">
+        <template>
+          <a class="work" data-item-href="url">
+            <span class="thumb"><img data-item-src="image" alt="" loading="lazy"><span class="thumb-title" data-item="title"></span></span>
+            <span class="work-meta"><strong data-item="title"></strong><span data-item="description"></span></span>
+          </a>
+        </template>
+      </div>
+    </section>
+
+    <section data-section="bio" class="split">
+      <h2><span>02</span> About</h2>
+      <div>
+        <p data-field="bio"></p>
+        <ul class="tags" data-list="researchInterests"><template><li data-item="."></li></template></ul>
+      </div>
+    </section>
+
+    <section data-section="publications" class="split">
+      <h2><span>03</span> Press &amp; publications</h2>
+      <ol class="list" data-list="publications">
+        <template><li><a data-item-href="url"><strong data-item="title"></strong><span><span data-item="venue"></span>, <span data-item="year"></span></span></a></li></template>
+      </ol>
+    </section>
+
+    <section data-section="awards" class="split">
+      <h2><span>04</span> Recognition</h2>
+      <ol class="list" data-list="awards">
+        <template><li><strong data-item="title"></strong><span data-item="year"></span></li></template>
+      </ol>
+    </section>
+
+    <section class="split">
+      <h2><span>05</span> Elsewhere</h2>
+      <div class="links" data-list="links">
+        <template><a data-item-href="url"><span data-item="label"></span> ↗</a></template>
+      </div>
+    </section>
+
+    <section class="contact">
+      <div class="qr" data-qr></div>
+      <div>
+        <p class="big">Let's make something.</p>
+        <p><a data-href="email" data-prefix="mailto:" data-field="email"></a></p>
+        <p class="dim" data-card-url></p>
+        <div class="wallet" data-wallet-group hidden>
+          <a class="wbtn" data-wallet="apple" hidden><span data-icon="apple"></span><span><small>Add to</small>Apple Wallet</span></a>
+          <a class="wbtn" data-wallet="google" hidden><span data-icon="wallet"></span><span><small>Save to</small>Google Wallet</span></a>
+          <a class="wbtn" data-wallet="samsung" hidden><span data-icon="wallet"></span><span><small>Add to</small>Samsung Wallet</span></a>
+        </div>
+      </div>
+    </section>
+
+    <footer><span data-field="brand.org"></span><a class="powered" data-powered>Powered by <strong>ScholarTap</strong></a></footer>
+  </main>
+</body>
+</html>

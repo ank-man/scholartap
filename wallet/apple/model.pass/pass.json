@@ -1,0 +1,15 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.replace.me",
+  "teamIdentifier": "REPLACEME",
+  "organizationName": "UGA Graduate Student Association",
+  "description": "GSA Connect card",
+  "serialNumber": "replaced-at-build",
+  "sharingProhibited": false,
+  "generic": {
+    "primaryFields": [],
+    "secondaryFields": [],
+    "auxiliaryFields": [],
+    "backFields": []
+  }
+}

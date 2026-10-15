@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.DS_Store
+*.p12
+*.pem
+*.key
+service-account*.json

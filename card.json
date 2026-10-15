@@ -1,0 +1,145 @@
+{
+  "setup": false,
+  "template": "classic",
+  "slug": "jordan-dawgson",
+  "name": "Jordan Dawgson",
+  "pronouns": "they/them",
+  "title": "Ph.D. Candidate, Plant Biology",
+  "headline": "I study how crops sense drought — and how to help them remember it.",
+  "department": "Department of Plant Biology",
+  "organization": "University of Georgia",
+  "gsaRole": "GSA Senator · Franklin College of Arts & Sciences",
+  "badgeLabel": "Officer · Representative",
+  "location": "Athens, GA",
+  "photo": "",
+  "bio": "Fourth-year doctoral candidate working at the intersection of plant physiology and genomics. Former TA for BIOL 1107, peer mentor, and coffee-fuelled R enthusiast. Open to collaborations, guest lectures and industry internships for Summer 2027.",
+  "email": "jordan.dawgson@uga.edu",
+  "phone": "+1 706 555 0142",
+  "website": "https://example.com",
+  "cv": "assets/cv.pdf",
+  "calendar": "https://calendar.app.google/your-booking-link",
+  "researchInterests": [
+    "Drought stress memory",
+    "Root phenotyping",
+    "Epigenomics",
+    "Sorghum & millet",
+    "Open science"
+  ],
+  "links": [
+    {
+      "label": "Google Scholar",
+      "url": "https://scholar.google.com/",
+      "icon": "scholar"
+    },
+    {
+      "label": "ORCID",
+      "url": "https://orcid.org/",
+      "icon": "orcid"
+    },
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/",
+      "icon": "linkedin"
+    },
+    {
+      "label": "GitHub",
+      "url": "https://github.com/",
+      "icon": "github"
+    },
+    {
+      "label": "Lab website",
+      "url": "https://example.com/lab",
+      "icon": "research"
+    }
+  ],
+  "publications": [
+    {
+      "title": "Transcriptional memory of drought in sorghum roots",
+      "authors": "Dawgson J., Smith A., Lee K.",
+      "venue": "Plant Physiology",
+      "year": 2026,
+      "url": "https://doi.org/10.0000/example1"
+    },
+    {
+      "title": "A low-cost rhizotron for high-throughput root imaging",
+      "authors": "Dawgson J., Patel R.",
+      "venue": "Plant Methods",
+      "year": 2025,
+      "url": "https://doi.org/10.0000/example2"
+    },
+    {
+      "title": "Epigenetic priming across generations in pearl millet",
+      "authors": "Nguyen T., Dawgson J., Lee K.",
+      "venue": "bioRxiv (preprint)",
+      "year": 2025,
+      "url": "https://doi.org/10.0000/example3"
+    }
+  ],
+  "projects": [
+    {
+      "title": "RootCam",
+      "description": "Open-hardware root imaging rig built from a Raspberry Pi and $40 of parts.",
+      "url": "https://github.com/"
+    },
+    {
+      "title": "Drought Memory Atlas",
+      "description": "Interactive browser for 1,200 stress-response transcriptomes.",
+      "url": "https://example.com/atlas"
+    }
+  ],
+  "education": [
+    {
+      "degree": "Ph.D., Plant Biology",
+      "school": "University of Georgia",
+      "years": "2023 – present"
+    },
+    {
+      "degree": "B.S., Biology",
+      "school": "Georgia State University",
+      "years": "2019 – 2023"
+    }
+  ],
+  "awards": [
+    {
+      "title": "NSF GRFP Honorable Mention",
+      "year": 2024
+    },
+    {
+      "title": "UGA Graduate School Dean's Award",
+      "year": 2025
+    }
+  ],
+  "officeHours": "Tue & Thu · 2–4 pm · Miller Plant Sciences 2502",
+  "events": [
+    {
+      "title": "GSA General Assembly",
+      "date": "Nov 4, 2026",
+      "where": "Tate Center 480",
+      "url": ""
+    },
+    {
+      "title": "Research Showcase Poster Night",
+      "date": "Nov 19, 2026",
+      "where": "Zell B. Miller Learning Center",
+      "url": ""
+    }
+  ],
+  "brand": {
+    "cardName": "GSA Connect",
+    "org": "UGA Graduate Student Association",
+    "orgShort": "UGA GSA"
+  },
+  "theme": {
+    "accent": ""
+  },
+  "poweredBy": {
+    "name": "ScholarTap",
+    "url": "https://scholartap.com"
+  },
+  "siteUrl": "",
+  "wallet": {
+    "backgroundColor": "#BA0C2F",
+    "foregroundColor": "#FFFFFF",
+    "labelColor": "#F6E7EA"
+  }
+}

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" class="gc-loading">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>GSA Connect</title>
+  <meta name="theme-color" content="#BA0C2F">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/vendor/qrcode.js" defer></script>
+  <script src="js/card.js" defer></script>
+</head>
+<body>
+  <!-- TEMPLATE: Classic — Bulldog red, bold, all-purpose. Edit card.json, not this file. -->
+  <header class="hero">
+    <div class="hero-band">
+      <span class="brand"><span class="brand-dot"></span><span data-field="brand.orgShort">UGA GSA</span> <b>Connect</b></span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="profile">
+      <div class="avatar">
+        <img data-src="photo" alt="">
+        <span class="initials" data-initials hidden></span>
+      </div>
+      <h1 data-field="name"></h1>
+      <p class="pronouns" data-field="pronouns"></p>
+      <p class="title" data-field="title"></p>
+      <p class="dept" data-field="department"></p>
+      <p class="role-chip" data-show="gsaRole"><span data-icon="users"></span><span data-field="gsaRole"></span></p>
+      <p class="headline" data-field="headline"></p>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="#" data-action="save-contact"><span data-icon="contact"></span>Save contact</a>
+        <a class="btn" href="#" data-action="share"><span data-icon="share"></span>Share</a>
+      </div>
+      <div class="quick">
+        <a data-href="email" data-prefix="mailto:" aria-label="Email"><span data-icon="email"></span></a>
+        <a data-href="phone" data-prefix="tel:" aria-label="Call"><span data-icon="phone"></span></a>
+        <a data-href="website" aria-label="Website"><span data-icon="website"></span></a>
+        <a data-href="cv" aria-label="CV" target="_blank"><span data-icon="cv"></span></a>
+      </div>
+    </section>
+
+    <section class="panel" data-section="bio">
+      <h2>About</h2>
+      <p data-field="bio"></p>
+    </section>
+
+    <section class="panel" data-section="researchInterests">
+      <h2>Research</h2>
+      <ul class="chips" data-list="researchInterests"><template><li data-item="."></li></template></ul>
+    </section>
+
+    <a class="cv-cta" data-href="cv" target="_blank">
+      <span data-icon="cv"></span>
+      <span><strong>Download CV</strong><small>PDF · always up to date</small></span>
+      <span data-icon="download"></span>
+    </a>
+
+    <section class="panel" data-section="links">
+      <h2>Find me online</h2>
+      <div class="links" data-list="links">
+        <template>
+          <a class="link" data-item-href="url">
+            <span class="link-icon" data-item-icon="icon"></span>
+            <span data-item="label"></span>
+            <span class="arrow" data-icon="arrow"></span>
+          </a>
+        </template>
+      </div>
+    </section>
+
+    <section class="panel" data-section="publications">
+      <h2>Recent publications</h2>
+      <ol class="pubs" data-list="publications">
+        <template>
+          <li><a data-item-href="url"><span class="pub-title" data-item="title"></span></a>
+            <span class="pub-meta"><span data-item="venue"></span> · <span data-item="year"></span></span></li>
+        </template>
+      </ol>
+    </section>
+
+    <section class="panel connect">
+      <div class="qr" data-qr></div>
+      <div>
+        <h2>Scan to connect</h2>
+        <p class="muted" data-card-url></p>
+        <a class="btn btn-ghost" href="#" data-action="copy-link"><span data-icon="copy"></span>Copy link</a>
+      </div>
+    </section>
+
+    <section class="wallet-wrap" data-wallet-group hidden>
+      <h2>Keep it in your wallet</h2>
+      <div class="wallet">
+        <a class="wbtn" data-wallet="apple" hidden><span data-icon="apple"></span><span><small>Add to</small>Apple Wallet</span></a>
+        <a class="wbtn" data-wallet="google" hidden><span data-icon="wallet"></span><span><small>Save to</small>Google Wallet</span></a>
+        <a class="wbtn" data-wallet="samsung" hidden><span data-icon="wallet"></span><span><small>Add to</small>Samsung Wallet</span></a>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span data-field="brand.org"></span>
+      <a class="powered" data-powered>Powered by <strong>ScholarTap</strong></a>
+    </footer>
+  </main>
+</body>
+</html>

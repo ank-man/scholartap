@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>GSA Connect Setup</title>
+  <meta name="description" content="Create your UGA GSA Connect digital business card: add your details, pick a template, publish. Powered by ScholarTap.">
+  <meta name="theme-color" content="#BA0C2F">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #BA0C2F; --accent-ink: #fff;
+      --bg: #f5f2ee; --panel: #fff; --ink: #18130f; --muted: #6c645d; --line: #e4ddd6; --field: #fbfaf8;
+      --ok: #1f7a4d; --warn: #9a5b00; --err: #b3261e;
+      font: 15px/1.5 Inter, system-ui, sans-serif;
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { --bg: #121012; --panel: #1c191b; --ink: #f1edea; --muted: #a39b95; --line: #332e31; --field: #161315; --ok: #5bd39a; --warn: #f0b35a; --err: #ff8a80; color-scheme: dark; }
+    }
+    :root[data-theme="dark"] { --bg: #121012; --panel: #1c191b; --ink: #f1edea; --muted: #a39b95; --line: #332e31; --field: #161315; --ok: #5bd39a; --warn: #f0b35a; --err: #ff8a80; color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); min-height: 100dvh; }
+    [hidden] { display: none !important; }
+    a { color: var(--accent); }
+    h1, h2 { font-family: Fraunces, Georgia, serif; letter-spacing: -.01em; }
+
+    /* top bar + steps */
+    .top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--panel) 92%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    .top-in { max-width: 1240px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; text-decoration: none; color: var(--ink); }
+    .brand img { width: 26px; height: 26px; }
+    .steps { display: flex; gap: 4px; margin-left: auto; list-style: none; padding: 0; margin-top: 0; margin-bottom: 0; }
+    .steps button { all: unset; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--muted); }
+    .steps button:focus-visible { outline: 2px solid var(--accent); }
+    .steps .n { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid currentColor; font-size: 12px; }
+    .steps [aria-current="step"] { color: var(--ink); background: var(--field); }
+    .steps [aria-current="step"] .n { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .steps .done .n { background: var(--ink); border-color: var(--ink); color: var(--panel); }
+    .steps button:disabled { cursor: default; opacity: .5; }
+    .status { font-size: 12.5px; color: var(--muted); }
+
+    .layout { max-width: 1240px; margin: 0 auto; padding: 22px 16px 60px; display: grid; grid-template-columns: minmax(0, 640px) minmax(0, 1fr); gap: 28px; }
+    .layout.solo { grid-template-columns: minmax(0, 720px); justify-content: center; }
+    section.step { display: grid; gap: 16px; align-content: start; min-width: 0; }
+    .intro h1 { margin: 0; font-size: clamp(30px, 5vw, 44px); line-height: 1.05; }
+    .intro p { margin: 8px 0 0; color: var(--muted); font-size: 16px; }
+    fieldset { margin: 0; border: 1px solid var(--line); background: var(--panel); border-radius: 16px; padding: 16px 18px 18px; display: grid; gap: 12px; min-width: 0; }
+    legend { padding: 0 6px; font-weight: 700; font-size: 12.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+    .hint { margin: 0; color: var(--muted); font-size: 13px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; min-width: 0; }
+    label .opt { font-weight: 400; color: var(--muted); }
+    input, textarea, select { width: 100%; font: inherit; color: inherit; background: var(--field); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; min-height: 42px; }
+    textarea { min-height: 96px; resize: vertical; }
+    input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+    input[aria-invalid="true"] { border-color: var(--err); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 600 15px/1 Inter, system-ui, sans-serif; padding: 11px 16px; min-height: 44px; border-radius: 11px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; text-decoration: none; }
+    .btn:hover { border-color: var(--ink); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+    .btn.primary:hover { filter: brightness(1.08); }
+    .btn.small { min-height: 34px; padding: 7px 11px; font-size: 13px; }
+    .btn.ghost { border-color: transparent; color: var(--muted); background: none; }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+    .nav { display: flex; gap: 10px; justify-content: space-between; align-items: center; }
+
+    /* start */
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .choice { all: unset; cursor: pointer; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 22px; display: grid; gap: 6px; }
+    .choice:hover, .choice:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+    .choice b { font: 700 20px/1.2 Fraunces, Georgia, serif; }
+    .choice span { color: var(--muted); font-size: 14px; }
+    .choice .ico { font-size: 28px; }
+    .how { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; counter-reset: s; }
+    .how div { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; font-size: 14px; }
+    .how b { display: block; margin-bottom: 2px; }
+    .how div::before { counter-increment: s; content: counter(s); display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 12px; margin-bottom: 6px; }
+
+    /* media */
+    .media { display: grid; grid-template-columns: 112px 1fr; gap: 16px; align-items: center; }
+    .drop { width: 112px; height: 112px; border-radius: 50%; border: 2px dashed var(--line); display: grid; place-items: center; overflow: hidden; cursor: pointer; background: var(--field); color: var(--muted); font-size: 12px; text-align: center; position: relative; }
+    .drop img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+    .drop.over { border-color: var(--accent); }
+    .filerow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .filename { font-size: 13px; color: var(--muted); }
+
+    /* repeaters */
+    .rep { display: grid; gap: 10px; }
+    .rep-item { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--field); }
+    .rep-item .row { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+    .rep-tools { display: flex; gap: 4px; justify-content: flex-end; }
+    .rep-tools button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 4px 6px; border-radius: 6px; }
+    .rep-tools button:hover { background: var(--line); color: var(--ink); }
+    details.more { border: 1px solid var(--line); background: var(--panel); border-radius: 16px; padding: 14px 18px; }
+    details.more summary { cursor: pointer; font-weight: 700; font-size: 12.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+    details.more[open] summary { margin-bottom: 12px; }
+    details.more > div { display: grid; gap: 14px; }
+
+    /* template picker */
+    .tpl-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .tpl-bar input { flex: 1 1 200px; min-height: 38px; }
+    .gchip { border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 6px 12px; font: 500 13px/1.2 Inter, sans-serif; cursor: pointer; }
+    .gchip[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+    .tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; }
+    .tpl { all: unset; cursor: pointer; display: grid; gap: 4px; border-radius: 14px; padding: 6px; border: 2px solid transparent; }
+    .tpl:hover { background: var(--panel); }
+    .tpl:focus-visible { outline: 2px solid var(--accent); }
+    .tpl[aria-pressed="true"] { border-color: var(--accent); background: var(--panel); }
+    .thumb { aspect-ratio: 390 / 540; border-radius: 10px; overflow: hidden; background: var(--sw); border: 1px solid var(--line); position: relative; }
+    .thumb img { width: 100%; display: block; }
+    .tpl b { font-size: 13px; line-height: 1.25; }
+    .tpl small { font-size: 11.5px; color: var(--muted); text-transform: capitalize; }
+    .tpl[aria-pressed="true"] b::after { content: " ✓"; color: var(--accent); }
+
+    /* preview */
+    .preview { position: sticky; top: 76px; align-self: start; display: grid; justify-items: center; gap: 8px; }
+    .phone { width: 380px; max-width: 100%; height: min(780px, calc(100dvh - 130px)); border-radius: 44px; border: 10px solid #111; background: #111; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(0,0,0,.5); }
+    .phone iframe { width: 100%; height: 100%; border: 0; border-radius: 34px; background: #fff; }
+    .preview p { margin: 0; font-size: 12.5px; color: var(--muted); }
+    .peek { display: none; }
+
+    /* publish */
+    .gh-box { display: grid; gap: 12px; }
+    .tokenrow { display: flex; gap: 8px; }
+    .tokenrow input { font-family: ui-monospace, Menlo, monospace; font-size: 13.5px; }
+    .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; font-size: 14px; }
+    .check input { width: 18px; height: 18px; min-height: 0; margin-top: 2px; accent-color: var(--accent); }
+    ol.howto { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; }
+    .prefix { display: flex; align-items: stretch; }
+    .prefix span { display: grid; place-items: center; padding: 0 10px; background: var(--line); border-radius: 10px 0 0 10px; font-size: 13px; color: var(--muted); white-space: nowrap; }
+    .prefix input { border-radius: 0 10px 10px 0; }
+    .progress { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    .progress li { display: flex; gap: 10px; align-items: center; font-size: 14.5px; color: var(--muted); }
+    .progress li::before { content: ""; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line); flex: none; }
+    .progress li.run { color: var(--ink); font-weight: 600; }
+    .progress li.run::before { border-color: var(--accent); border-top-color: transparent; animation: spin .8s linear infinite; }
+    .progress li.ok { color: var(--ink); }
+    .progress li.ok::before { content: "✓"; display: grid; place-items: center; background: var(--ok); border-color: var(--ok); color: #fff; font-size: 11px; font-weight: 700; }
+    .progress li.bad { color: var(--err); font-weight: 600; }
+    .progress li.bad::before { content: "!"; display: grid; place-items: center; background: var(--err); border-color: var(--err); color: #fff; font-size: 11px; font-weight: 700; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .msg { padding: 12px 14px; border-radius: 12px; font-size: 14px; }
+    .msg.err { background: color-mix(in srgb, var(--err) 12%, transparent); color: var(--err); }
+    .msg.warn { background: color-mix(in srgb, var(--warn) 14%, transparent); color: var(--warn); }
+    .done { text-align: center; display: grid; gap: 14px; justify-items: center; }
+    .done h2 { margin: 0; font-size: 34px; }
+    .done .url { font: 600 17px/1.3 ui-monospace, Menlo, monospace; word-break: break-all; }
+    .done .qr { width: 200px; background: #fff; padding: 12px; border-radius: 14px; border: 1px solid var(--line); }
+    .done .qr svg { display: block; width: 100%; height: auto; }
+    .done .row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    footer { text-align: center; color: var(--muted); font-size: 13px; padding: 0 16px 30px; }
+    footer strong { color: var(--accent); }
+
+    @media (max-width: 1000px) {
+      .layout { grid-template-columns: 1fr; }
+      .preview { display: none; }
+      .preview.open { display: grid; position: fixed; inset: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 96%, transparent); padding: 16px; place-content: center; }
+      .preview.open .phone { height: calc(100dvh - 110px); }
+      .peek { display: inline-flex; position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 21; box-shadow: 0 10px 30px -10px rgba(0,0,0,.4); }
+      .steps .lbl { display: none; }
+    }
+    @media (max-width: 560px) { .grid2, .choices, .how { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="top-in">
+      <a class="brand" href="./"><img src="../favicon.svg" alt="">GSA Connect</a>
+      <ol class="steps" id="steps">
+        <li><button type="button" data-go="details"><span class="n">1</span><span class="lbl">Your details</span></button></li>
+        <li><button type="button" data-go="template"><span class="n">2</span><span class="lbl">Template</span></button></li>
+        <li><button type="button" data-go="publish"><span class="n">3</span><span class="lbl">Publish</span></button></li>
+      </ol>
+      <span class="status" id="status" role="status"></span>
+    </div>
+  </header>
+
+  <div class="layout solo" id="layout">
+    <!-- ───────── Start ───────── -->
+    <section class="step" data-step="start">
+      <div class="intro">
+        <h1>Your digital business card, in three steps.</h1>
+        <p>For UGA graduate &amp; professional students: share your CV, research and links with a tap, a QR code, or from Apple / Google Wallet. Free, hosted on your own GitHub.</p>
+      </div>
+      <div class="how">
+        <div><b>Add your details</b>Name, photo, CV, research, links.</div>
+        <div><b>Pick a template</b>51 designs for every major, with a live preview.</div>
+        <div><b>Publish</b>We create your card on GitHub. Your link is ready in about a minute.</div>
+      </div>
+      <div class="choices">
+        <button class="choice" type="button" id="startNew"><span class="ico">✨</span><b>Create my card</b><span>Start fresh. About 5 minutes.</span></button>
+        <button class="choice" type="button" id="startEdit"><span class="ico">✏️</span><b>Edit my card</b><span>Update a card you already published.</span></button>
+      </div>
+      <p class="hint" id="resumeHint" hidden>You have an unfinished draft. <a href="#" id="resume">Continue where you left off</a> · <a href="#" id="discard">start over</a></p>
+    </section>
+
+    <!-- ───────── 1 · Details ───────── -->
+    <section class="step" data-step="details" hidden>
+      <div class="intro"><h1>Your details</h1><p>Anything you leave blank is simply hidden on your card.</p></div>
+      <form id="form" onsubmit="return false" autocomplete="on">
+        <div style="display:grid;gap:16px">
+          <fieldset>
+            <legend>You</legend>
+            <div class="media">
+              <div class="drop" id="photoDrop" tabindex="0" role="button" aria-label="Upload profile photo"><span id="photoHint">Add photo</span><img id="photoImg" alt="" hidden></div>
+              <div class="filerow">
+                <input type="file" id="photoFile" accept="image/*" hidden>
+                <button type="button" class="btn small" id="photoPick">Upload photo</button>
+                <button type="button" class="btn small ghost" id="photoRemove" hidden>Remove</button>
+                <p class="hint" style="width:100%">Square crop and resize happen automatically.</p>
+              </div>
+            </div>
+            <div class="grid2">
+              <label>Full name <input name="name" required autocomplete="name" placeholder="Jordan Dawgson"></label>
+              <label>Pronouns <span class="opt">optional</span><input name="pronouns" placeholder="they/them"></label>
+            </div>
+            <label>Title / position <input name="title" placeholder="Ph.D. Candidate, Plant Biology"></label>
+            <label>Headline <span class="opt">one sentence about your work</span><input name="headline" maxlength="140"></label>
+            <label>Short bio <textarea name="bio" maxlength="900"></textarea></label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Affiliation</legend>
+            <div class="grid2">
+              <label>Department / school <input name="department" placeholder="Department of Entomology"></label>
+              <label>University <input name="organization" placeholder="University of Georgia"></label>
+            </div>
+            <div class="grid2">
+              <label>GSA role <span class="opt">optional</span><input name="gsaRole" placeholder="GSA Senator · CAES"></label>
+              <label>Location <span class="opt">optional</span><input name="location" placeholder="Athens, GA"></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Contact &amp; CV</legend>
+            <div class="grid2">
+              <label>Email <input name="email" type="email" autocomplete="email" placeholder="you@uga.edu"></label>
+              <label>Phone <span class="opt">optional</span><input name="phone" type="tel" autocomplete="tel"></label>
+            </div>
+            <div class="grid2">
+              <label>Website <span class="opt">optional</span><input name="website" type="url" placeholder="https://"></label>
+              <label>Booking link <span class="opt">optional</span><input name="calendar" type="url" placeholder="Calendly / Google booking"></label>
+            </div>
+            <div class="filerow">
+              <input type="file" id="cvFile" accept="application/pdf" hidden>
+              <button type="button" class="btn small" id="cvPick">Upload CV (PDF)</button>
+              <span class="filename" id="cvName">No CV yet</span>
+              <button type="button" class="btn small ghost" id="cvRemove" hidden>Remove</button>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Research &amp; links</legend>
+            <label>Research interests <span class="opt">comma separated</span><input name="researchInterests" data-csv placeholder="Pollinator health, Insect behavior"></label>
+            <div data-rep="links"></div>
+            <div data-rep="publications"></div>
+          </fieldset>
+
+          <details class="more">
+            <summary>More (optional): projects, education, awards, office hours, events</summary>
+            <div>
+              <div data-rep="projects"></div>
+              <div data-rep="education"></div>
+              <div data-rep="awards"></div>
+              <label>Office hours <input name="officeHours" placeholder="Tue &amp; Thu · 2–4 pm · Room 2502"></label>
+              <label>Badge label <span class="opt">Officer template</span><input name="badgeLabel" placeholder="GSA Senator · Class of 2028"></label>
+              <div data-rep="events"></div>
+            </div>
+          </details>
+        </div>
+      </form>
+      <div class="nav"><button class="btn ghost" type="button" data-go="start">← Back</button><button class="btn primary" type="button" data-next="template">Next: pick a template →</button></div>
+    </section>
+
+    <!-- ───────── 2 · Template ───────── -->
+    <section class="step" data-step="template" hidden>
+      <div class="intro"><h1>Pick a template</h1><p>Tap a design to see <em>your</em> card in it. You can switch any time later.</p></div>
+      <div class="tpl-bar" id="tplGroups"><input type="search" id="tplSearch" placeholder="Search: chemistry, law, insects, dark…" aria-label="Search templates"></div>
+      <div class="tpl-grid" id="tplGrid" role="list"></div>
+      <div class="nav"><button class="btn ghost" type="button" data-go="details">← Details</button><button class="btn primary" type="button" data-next="publish">Next: publish →</button></div>
+    </section>
+
+    <!-- ───────── 3 · Publish ───────── -->
+    <section class="step" data-step="publish" hidden>
+      <div class="intro"><h1 id="pubTitle">Publish your card</h1><p id="pubLede">Your card lives in your own GitHub account: free hosting, your link forever.</p></div>
+
+      <div id="pubForm" class="gh-box">
+        <fieldset>
+          <legend>1 · Connect GitHub</legend>
+          <ol class="howto">
+            <li>No GitHub account? <a href="https://github.com/signup" target="_blank" rel="noopener">Create one free</a> (use any email).</li>
+            <li><a id="tokenLink" href="#" target="_blank" rel="noopener"><b>Create a token</b></a>. The form opens pre-filled; scroll down and click <b>Generate token</b>.</li>
+            <li>Copy the token (starts with <code>ghp_</code>) and paste it here:</li>
+          </ol>
+          <div class="tokenrow">
+            <input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="ghp_…" aria-label="GitHub token">
+            <button class="btn small" type="button" id="tokenShow">Show</button>
+          </div>
+          <label class="check"><input type="checkbox" id="remember"> Remember on this device (so editing later is one click). Don't tick this on a shared computer.</label>
+          <p class="hint">The token stays in your browser and is only sent to GitHub. You can delete it any time at <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">github.com/settings/tokens</a>.</p>
+        </fieldset>
+
+        <fieldset id="repoNew">
+          <legend>2 · Your link</legend>
+          <label>Card name
+            <div class="prefix"><span id="userPrefix">yourname.github.io/</span><input id="repoName" value="card" pattern="[A-Za-z0-9._-]+" autocapitalize="off" spellcheck="false"></div>
+          </label>
+          <p class="hint">Tip: use <code id="rootTip">yourname.github.io</code> as the name to get the shortest link.</p>
+        </fieldset>
+
+        <fieldset id="repoEdit" hidden>
+          <legend>2 · Which card?</legend>
+          <label>Your card's repo <input id="repoFull" placeholder="yourname/card" autocapitalize="off" spellcheck="false"></label>
+          <button class="btn small" type="button" id="loadRepo">Load my current details</button>
+          <p class="hint" id="loadHint">Loads what's on your card now, so you only change what you need.</p>
+        </fieldset>
+
+        <div class="msg err" id="pubErr" hidden></div>
+        <div class="nav"><button class="btn ghost" type="button" data-go="template">← Template</button><button class="btn primary" type="button" id="publishBtn">Publish my card</button></div>
+      </div>
+
+      <ul class="progress" id="progress" hidden></ul>
+
+      <div class="done" id="done" hidden>
+        <h2>🎉 Your card is live</h2>
+        <a class="url" id="doneUrl" target="_blank" rel="noopener"></a>
+        <div class="qr" id="doneQr"></div>
+        <div class="row">
+          <a class="btn primary" id="doneOpen" target="_blank" rel="noopener">Open my card</a>
+          <button class="btn" type="button" id="doneCopy">Copy link</button>
+          <a class="btn" id="doneNfc" target="_blank" rel="noopener">📶 Program NFC card</a>
+        </div>
+        <p class="hint" id="doneNote"></p>
+        <p class="hint">Edit any time at <a id="doneEdit" target="_blank" rel="noopener"></a> · Wallet passes: see <code>docs/WALLET-SETUP.md</code> in your repo.</p>
+      </div>
+    </section>
+
+    <aside class="preview" id="preview" hidden>
+      <div class="phone"><iframe id="frame" title="Live preview of your card"></iframe></div>
+      <p id="previewLabel">Live preview</p>
+    </aside>
+  </div>
+  <button class="btn primary peek" type="button" id="peek" hidden>👁 Preview</button>
+  <footer>GSA Connect · UGA Graduate Student Association · Powered by <strong>ScholarTap</strong></footer>
+
+<script src="../js/vendor/qrcode.js"></script>
+<script>
+(() => {
+  "use strict";
+  // ── config ───────────────────────────────────────────────
+  const TEMPLATE_REPO = "ank-man/gsa-connect";      // the repo every card is created from
+  const ROOT = new URL("../", location.href).href;     // site root (where card.json, css/, templates/ live)
+  const DRAFT_KEY = "gsa-connect-draft", TOKEN_KEY = "gsa-connect-token";
+  const TOKEN_URL = "https://github.com/settings/tokens/new?description=" + encodeURIComponent("GSA Connect card") + "&scopes=public_repo,workflow";
+
+  const ICONS = ["link", "scholar", "orcid", "linkedin", "github", "research", "website", "social", "video", "book", "email", "phone", "calendar", "cv"];
+  const REPS = {
+    links: { title: "Links", add: "Add link", fields: [["label", "Label", "Google Scholar"], ["url", "URL", "https://", "url"], ["icon", "Icon", ICONS]] },
+    publications: { title: "Publications", add: "Add publication", fields: [["title", "Title"], ["authors", "Authors"], ["venue", "Journal / venue"], ["year", "Year", "2026", "number"], ["url", "DOI / link", "https://", "url"]] },
+    projects: { title: "Projects", add: "Add project", fields: [["title", "Name"], ["description", "One-line description"], ["url", "Link", "https://", "url"]] },
+    education: { title: "Education", add: "Add degree", fields: [["degree", "Degree"], ["school", "School"], ["years", "Years", "2023 – present"]] },
+    awards: { title: "Awards & honours", add: "Add award", fields: [["title", "Award"], ["year", "Year", "", "number"]] },
+    events: { title: "Upcoming events", add: "Add event", fields: [["title", "Event"], ["date", "Date", "Nov 4, 2026"], ["where", "Where"], ["url", "Link", "https://", "url"]] }
+  };
+  const BLANK = () => ({
+    setup: true, template: "classic", name: "", pronouns: "", title: "", headline: "", department: "", organization: "University of Georgia",
+    gsaRole: "", location: "Athens, GA", photo: "", bio: "", email: "", phone: "", website: "", cv: "", calendar: "",
+    researchInterests: [], links: [], publications: [], projects: [], education: [], awards: [], officeHours: "", badgeLabel: "", events: [],
+    brand: { cardName: "GSA Connect", org: "UGA Graduate Student Association", orgShort: "UGA GSA" },
+    theme: { accent: "" }, poweredBy: { name: "ScholarTap", url: "https://scholartap.com" }, siteUrl: "",
+    wallet: { backgroundColor: "#BA0C2F", foregroundColor: "#FFFFFF", labelColor: "#F6E7EA" }
+  });
+
+  // ── state ────────────────────────────────────────────────
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const S = { mode: "new", step: "start", card: BLANK(), photo: null, thumb: null, cv: null, cvName: "", repo: "", catalog: null, assetBase: null };
+  const asset = (p) => (!p ? "" : /^(https?:|data:)/.test(p) ? p : (S.assetBase || ROOT) + p);
+  const get = (o, p) => p.split(".").reduce((a, k) => a?.[k], o);
+  const set = (o, p, v) => { const ks = p.split("."); const last = ks.pop(); ks.reduce((a, k) => (a[k] ??= {}), o)[last] = v; };
+  const status = (t, cls = "") => { const el = $("#status"); el.textContent = t; el.style.color = cls === "err" ? "var(--err)" : ""; };
+  const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} }, del(k) { try { localStorage.removeItem(k); } catch {} } };
+
+  // Is this app running on someone's own card site (→ default to editing that card)?
+  const site = (() => {
+    if (!location.hostname.endsWith(".github.io")) return null;
+    const owner = location.hostname.split(".")[0];
+    const seg = location.pathname.split("/").filter(Boolean);
+    const repo = seg.length > 1 ? seg[0] : `${owner}.github.io`;
+    const full = `${owner}/${repo}`;
+    return full.toLowerCase() === TEMPLATE_REPO.toLowerCase() ? null : full;
+  })();
+
+  function saveDraft() {
+    store.set(DRAFT_KEY, JSON.stringify({ mode: S.mode, card: S.card, photo: S.photo, thumb: S.thumb, repo: S.repo, step: S.step }));
+  }
+
+  // ── navigation ───────────────────────────────────────────
+  const ORDER = ["start", "details", "template", "publish"];
+  function go(step) {
+    if ((step === "template" || (step === "publish" && S.mode === "new")) && !S.card.name.trim()) { step = "details"; requireName(); }
+    S.step = step;
+    $$("section.step").forEach((s) => (s.hidden = s.dataset.step !== step));
+    const withPreview = step === "details" || step === "template";
+    $("#layout").classList.toggle("solo", !withPreview);
+    $("#preview").hidden = !withPreview; $("#peek").hidden = !withPreview;
+    const idx = ORDER.indexOf(step);
+    $$("#steps button").forEach((b) => {
+      const i = ORDER.indexOf(b.dataset.go);
+      b.toggleAttribute("aria-current", i === idx); if (i === idx) b.setAttribute("aria-current", "step");
+      b.classList.toggle("done", i < idx); b.disabled = idx === 0;
+    });
+    if (step === "template") renderPicker();
+    if (step === "publish") preparePublish();
+    if (withPreview) renderPreview();
+    window.scrollTo({ top: 0 });
+    saveDraft();
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-go], [data-next]"); if (!b) return;
+    go(b.dataset.go || b.dataset.next);
+  });
+  function requireName() {
+    const n = $('[name="name"]'); n.setAttribute("aria-invalid", "true"); n.focus();
+    status("Add your name to continue", "err");
+  }
+
+  // ── form binding ─────────────────────────────────────────
+  function hydrate() {
+    for (const el of $$("#form [name]")) {
+      const v = get(S.card, el.name);
+      el.value = el.hasAttribute("data-csv") ? (v || []).join(", ") : v ?? "";
+    }
+    $$("[data-rep]").forEach(renderRep);
+    showPhoto(); showCv();
+  }
+  $("#form").addEventListener("input", (e) => {
+    const el = e.target; if (!el.name) return;
+    let val = el.value;
+    if (el.hasAttribute("data-csv")) val = val.split(",").map((s) => s.trim()).filter(Boolean);
+    set(S.card, el.name, val);
+    if (el.name === "name") el.removeAttribute("aria-invalid");
+    changed();
+  });
+  let tPrev;
+  function changed() { saveDraft(); clearTimeout(tPrev); tPrev = setTimeout(renderPreview, 350); status("Draft saved on this device"); }
+
+  function renderRep(host) {
+    const key = host.dataset.rep, cfg = REPS[key];
+    S.card[key] ??= [];
+    host.innerHTML = `<label style="margin-bottom:6px">${cfg.title}</label><div class="rep"></div><button type="button" class="btn small" style="margin-top:8px">+ ${cfg.add}</button>`;
+    const list = $(".rep", host);
+    S.card[key].forEach((item, i) => list.appendChild(repItem(key, cfg, item, i, host)));
+    host.lastElementChild.onclick = () => { S.card[key].push(key === "links" ? { icon: "link" } : {}); renderRep(host); changed(); $$(".rep-item", host).at(-1)?.querySelector("input")?.focus(); };
+  }
+  function repItem(key, cfg, item, i, host) {
+    const div = document.createElement("div");
+    div.className = "rep-item";
+    div.innerHTML = `<div class="row">${cfg.fields.map(([f, label, ph, type]) => Array.isArray(ph)
+      ? `<label>${label}<select data-f="${f}">${ph.map((o) => `<option${o === (item[f] || "link") ? " selected" : ""}>${o}</option>`).join("")}</select></label>`
+      : `<label>${label}<input data-f="${f}" type="${type || "text"}" placeholder="${ph || ""}"></label>`).join("")}</div>
+      <div class="rep-tools"><button type="button" data-a="up" aria-label="Move up">↑</button><button type="button" data-a="down" aria-label="Move down">↓</button><button type="button" data-a="del">Remove</button></div>`;
+    $$("[data-f]", div).forEach((el) => {
+      if (el.tagName === "INPUT") el.value = item[el.dataset.f] ?? "";
+      el.addEventListener("input", (e) => {
+        e.stopPropagation();
+        const v = el.type === "number" && el.value ? Number(el.value) : el.value;
+        if (v === "") delete item[el.dataset.f]; else item[el.dataset.f] = v;
+        changed();
+      });
+    });
+    $(".rep-tools", div).onclick = (e) => {
+      const a = e.target.dataset.a; if (!a) return;
+      const arr = S.card[key];
+      if (a === "del") arr.splice(i, 1);
+      if (a === "up" && i > 0) [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
+      if (a === "down" && i < arr.length - 1) [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]];
+      renderRep(host); changed();
+    };
+    return div;
+  }
+  const cleanCard = () => {
+    const c = structuredClone(S.card);
+    for (const k of Object.keys(REPS)) c[k] = (c[k] || []).filter((o) => Object.entries(o).some(([f, v]) => f !== "icon" && v !== "" && v != null));
+    c.setup = true;
+    c.slug = (c.name || "card").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "card";
+    return c;
+  };
+
+  // ── photo & CV ───────────────────────────────────────────
+  function squareDataUrl(img, size, type, q) {
+    const c = document.createElement("canvas"); c.width = c.height = size;
+    const s = Math.min(img.naturalWidth, img.naturalHeight);
+    c.getContext("2d").drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, size, size);
+    return c.toDataURL(type, q);
+  }
+  async function handlePhoto(file) {
+    if (!file || !file.type.startsWith("image/")) return status("Please choose an image file", "err");
+    const img = new Image(); img.src = URL.createObjectURL(file);
+    try { await img.decode(); } catch { return status("Couldn't read that image", "err"); }
+    S.photo = squareDataUrl(img, 720, "image/jpeg", 0.85);
+    S.thumb = squareDataUrl(img, 270, "image/png");
+    S.card.photo = "assets/photo.jpg";
+    showPhoto(); changed();
+  }
+  function showPhoto() {
+    const src = S.photo || asset(S.card.photo);
+    $("#photoImg").hidden = !src; $("#photoHint").hidden = !!src; $("#photoRemove").hidden = !src;
+    if (src) $("#photoImg").src = src;
+  }
+  const drop = $("#photoDrop");
+  $("#photoPick").onclick = drop.onclick = () => $("#photoFile").click();
+  drop.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#photoFile").click(); } };
+  $("#photoFile").onchange = (e) => handlePhoto(e.target.files[0]);
+  drop.ondragover = (e) => { e.preventDefault(); drop.classList.add("over"); };
+  drop.ondragleave = () => drop.classList.remove("over");
+  drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove("over"); handlePhoto(e.dataTransfer.files[0]); };
+  $("#photoRemove").onclick = () => { S.photo = S.thumb = null; S.card.photo = ""; showPhoto(); changed(); };
+
+  function showCv() {
+    $("#cvName").textContent = S.cv ? `✓ ${S.cvName}` : S.card.cv ? "Current CV kept" : "No CV yet";
+    $("#cvRemove").hidden = !(S.cv || S.card.cv);
+  }
+  $("#cvPick").onclick = () => $("#cvFile").click();
+  $("#cvFile").onchange = (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    if (f.type !== "application/pdf") return status("Your CV must be a PDF", "err");
+    if (f.size > 20 * 1024 * 1024) return status("CV is over 20 MB; please compress it", "err");
+    S.cv = f; S.cvName = f.name; S.card.cv = "assets/cv.pdf"; showCv(); changed();
+  };
+  $("#cvRemove").onclick = () => { S.cv = null; S.card.cv = ""; showCv(); changed(); };
+
+  // ── templates & live preview ─────────────────────────────
+  async function catalog() {
+    if (!S.catalog) S.catalog = await (await fetch(ROOT + "templates/catalog.json")).json();
+    return S.catalog;
+  }
+  const layouts = {};
+  async function renderPreview() {
+    try {
+      const cat = await catalog();
+      const t = cat.themes.find((x) => x.id === S.card.template) || cat.themes[0];
+      const l = t.layout;
+      layouts[l] ||= await (await fetch(`${ROOT}templates/layouts/${l}/index.html`)).text();
+      const data = { ...cleanCard(), photo: S.photo || asset(S.card.photo), siteUrl: S.card.siteUrl || "https://yourname.github.io/card/" };
+      if (!data.name) data.name = "Your Name";
+      let html = layouts[l]
+        .replace("<head>", `<head><base href="${ROOT}">`)
+        .replace('<link rel="stylesheet" href="css/style.css">', `<link rel="stylesheet" href="templates/layouts/${l}/style.css"><style>${t.css}</style>`)
+        .replace('<script src="js/card.js" defer><\/script>', `<script>window.GSA_CARD=${JSON.stringify(data).replace(/</g, "\\u003c")};<\/script><script src="js/card.js" defer><\/script>`);
+      if (t.fontsHref) html = html.replace(/<link href="https:\/\/fonts\.googleapis\.com\/css2\?[^"]+" rel="stylesheet">/, `<link href="${t.fontsHref}" rel="stylesheet">`);
+      const frame = $("#frame");
+      const y = frame.contentWindow?.scrollY || 0;
+      frame.onload = () => { try { frame.contentWindow.scrollTo(0, y); } catch {} };
+      frame.srcdoc = html;
+      $("#previewLabel").textContent = `Live preview · ${t.name}`;
+    } catch (e) { console.error(e); }
+  }
+  $("#peek").onclick = () => { const p = $("#preview"); p.classList.toggle("open"); $("#peek").textContent = p.classList.contains("open") ? "✕ Close preview" : "👁 Preview"; };
+
+  let pickerBuilt = false;
+  async function renderPicker() {
+    const cat = await catalog();
+    const grid = $("#tplGrid");
+    if (!pickerBuilt) {
+      pickerBuilt = true;
+      const groups = [...new Set(cat.themes.map((t) => t.group))];
+      $("#tplGroups").insertAdjacentHTML("afterbegin", ["All", ...groups].map((g, i) => `<button type="button" class="gchip" data-g="${i ? g : ""}" aria-pressed="${!i}">${g}</button>`).join(""));
+      grid.innerHTML = cat.themes.map((t) => `
+        <button type="button" class="tpl" role="listitem" data-id="${t.id}" data-group="${t.group}" style="--sw:${t.accent}"
+          data-q="${(t.name + " " + t.group + " " + t.layout + " " + t.tagline + " " + t.bestFor).toLowerCase().replace(/"/g, "")}" title="${t.tagline.replace(/"/g, "&quot;")}">
+          <span class="thumb"><img loading="lazy" alt="" src="${ROOT}templates/previews/${t.id}.jpg" onerror="this.remove()"></span>
+          <b>${t.name}</b><small>${t.group} · ${t.layout}</small>
+        </button>`).join("");
+      let group = "";
+      const filter = () => {
+        const q = $("#tplSearch").value.trim().toLowerCase();
+        $$(".tpl", grid).forEach((b) => { b.hidden = (group && b.dataset.group !== group) || (q && !b.dataset.q.includes(q)); });
+      };
+      $("#tplGroups").addEventListener("click", (e) => {
+        const c = e.target.closest(".gchip"); if (!c) return;
+        group = c.dataset.g; $$(".gchip").forEach((x) => x.setAttribute("aria-pressed", x === c)); filter();
+      });
+      $("#tplSearch").addEventListener("input", filter);
+      grid.addEventListener("click", (e) => {
+        const b = e.target.closest(".tpl"); if (!b) return;
+        const t = cat.themes.find((x) => x.id === b.dataset.id);
+        S.card.template = t.id; S.card.wallet = { ...S.card.wallet, ...(t.wallet || {}) };
+        $$(".tpl", grid).forEach((x) => x.setAttribute("aria-pressed", x === b));
+        status(`Template: ${t.name}`); changed(); renderPreview();
+        if (matchMedia("(max-width: 1000px)").matches && !$("#preview").classList.contains("open")) $("#peek").click();
+      });
+    }
+    $$(".tpl", grid).forEach((x) => x.setAttribute("aria-pressed", x.dataset.id === S.card.template));
+  }
+
+  // ── GitHub ───────────────────────────────────────────────
+  async function gh(path, { method = "GET", body, token } = {}) {
+    const r = await fetch("https://api.github.com" + path, {
+      method,
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...(body && { "Content-Type": "application/json" }) },
+      body: body && JSON.stringify(body)
+    });
+    if (!r.ok) {
+      const j = await r.json().catch(() => ({}));
+      const e = new Error(j.message || r.statusText); e.status = r.status; e.details = j; throw e;
+    }
+    return r.status === 204 ? null : r.json().catch(() => null);
+  }
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const b64utf8 = (str) => { const bytes = new TextEncoder().encode(str); let s = ""; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(s); };
+  const fromB64utf8 = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, "")), (c) => c.charCodeAt(0)));
+  const fileB64 = (blob) => new Promise((ok, fail) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1]); r.onerror = fail; r.readAsDataURL(blob); });
+  const pagesUrl = (owner, repo) => repo.toLowerCase() === `${owner.toLowerCase()}.github.io` ? `https://${owner.toLowerCase()}.github.io/` : `https://${owner.toLowerCase()}.github.io/${repo}/`;
+
+  async function commitFiles(token, full, files, message) {
+    const ref = await gh(`/repos/${full}/git/ref/heads/main`, { token });
+    const base = await gh(`/repos/${full}/git/commits/${ref.object.sha}`, { token });
+    const tree = [];
+    for (const f of files) {
+      const blob = await gh(`/repos/${full}/git/blobs`, { method: "POST", token, body: { content: f.base64, encoding: "base64" } });
+      tree.push({ path: f.path, mode: "100644", type: "blob", sha: blob.sha });
+    }
+    const t = await gh(`/repos/${full}/git/trees`, { method: "POST", token, body: { base_tree: base.tree.sha, tree } });
+    const c = await gh(`/repos/${full}/git/commits`, { method: "POST", token, body: { message, tree: t.sha, parents: [ref.object.sha] } });
+    await gh(`/repos/${full}/git/refs/heads/main`, { method: "PATCH", token, body: { sha: c.sha } });
+    return c.sha;
+  }
+
+  function preparePublish() {
+    const edit = S.mode === "edit";
+    $("#pubTitle").textContent = edit ? "Save your changes" : "Publish your card";
+    $("#publishBtn").textContent = edit ? "Save changes" : "Publish my card";
+    $("#repoNew").hidden = edit; $("#repoEdit").hidden = !edit;
+    if (edit && !$("#repoFull").value) $("#repoFull").value = S.repo || site || "";
+    $("#tokenLink").href = TOKEN_URL;
+    const saved = store.get(TOKEN_KEY);
+    if (saved && !$("#token").value) { $("#token").value = saved; $("#remember").checked = true; }
+    $("#pubForm").hidden = false; $("#progress").hidden = true; $("#done").hidden = true; $("#pubErr").hidden = true;
+  }
+  $("#tokenShow").onclick = () => { const t = $("#token"); t.type = t.type === "password" ? "text" : "password"; $("#tokenShow").textContent = t.type === "password" ? "Show" : "Hide"; };
+  $("#token").addEventListener("change", async () => {
+    const token = $("#token").value.trim(); if (!token) return;
+    try { const u = await gh("/user", { token }); $("#userPrefix").textContent = `${u.login.toLowerCase()}.github.io/`; $("#rootTip").textContent = `${u.login.toLowerCase()}.github.io`; } catch {}
+  });
+
+  // Edit mode: pull the published card.json (public URL first, API fallback)
+  async function loadExisting(full, token) {
+    const [owner, repo] = full.split("/");
+    let card = null;
+    try { const r = await fetch(pagesUrl(owner, repo) + "card.json", { cache: "no-store" }); if (r.ok) card = await r.json(); } catch {}
+    if (!card && token) { const f = await gh(`/repos/${full}/contents/card.json`, { token }); card = JSON.parse(fromB64utf8(f.content)); }
+    if (!card) throw new Error("Couldn't find card.json. Check the repo name.");
+    S.card = { ...BLANK(), ...card, setup: true }; S.photo = S.thumb = null; S.cv = null; S.repo = full;
+    S.assetBase = pagesUrl(owner, repo);
+    hydrate(); saveDraft(); renderPreview();
+    return card;
+  }
+  $("#loadRepo").onclick = async () => {
+    const full = $("#repoFull").value.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "");
+    if (!/^[\w.-]+\/[\w.-]+$/.test(full)) return showErr("Enter it as yourname/repo-name");
+    try { await loadExisting(full, $("#token").value.trim()); $("#loadHint").textContent = `✓ Loaded ${S.card.name || "your card"}. Review your details and template, then save.`; status("Loaded your current card"); }
+    catch (e) { showErr(e.message); }
+  };
+
+  const steps = [];
+  function progress(list) {
+    const ul = $("#progress"); ul.hidden = false; ul.innerHTML = list.map((t, i) => `<li data-i="${i}">${t}</li>`).join("");
+    steps.length = 0; steps.push(...list);
+  }
+  const mark = (i, cls, text) => { const li = $(`#progress [data-i="${i}"]`); li.className = cls; if (text) li.textContent = text; };
+  function showErr(m) { const e = $("#pubErr"); e.innerHTML = m; e.hidden = false; }
+
+  $("#publishBtn").onclick = async () => {
+    $("#pubErr").hidden = true;
+    const token = $("#token").value.trim();
+    if (!token) return showErr("Paste your GitHub token first (step 1).");
+    if (!S.card.name.trim()) { go("details"); return requireName(); }
+    const edit = S.mode === "edit";
+    const btn = $("#publishBtn"); btn.disabled = true;
+    const plan = edit
+      ? ["Checking your GitHub token", "Finding your card", "Saving your changes", "Updating your card (about 1 minute)"]
+      : ["Checking your GitHub token", "Creating your card repo", "Copying the template", "Turning on free hosting", "Saving your profile", "Publishing your card (about 1 minute)"];
+    progress(plan);
+    let i = 0, owner, repo, full;
+    try {
+      mark(i, "run");
+      const user = await gh("/user", { token }).catch((e) => { throw new Error(e.status === 401 ? "That token isn't valid. Create a new one with the link in step 1." : e.message); });
+      owner = user.login;
+      if ($("#remember").checked) store.set(TOKEN_KEY, token); else store.del(TOKEN_KEY);
+      mark(i++, "ok", `Signed in as ${owner}`);
+
+      if (edit) {
+        mark(i, "run");
+        full = $("#repoFull").value.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "");
+        if (!/^[\w.-]+\/[\w.-]+$/.test(full)) throw new Error("Enter your card's repo as yourname/repo-name.");
+        const r = await gh(`/repos/${full}`, { token }).catch(() => { throw new Error(`Couldn't open ${full}. Check the name, and that the token belongs to its owner.`); });
+        if (!r.permissions?.push) throw new Error(`Your token can't write to ${full}.`);
+        [owner, repo] = full.split("/");
+        try { await gh(`/repos/${full}/pages`, { token }); } catch { await gh(`/repos/${full}/pages`, { method: "POST", token, body: { build_type: "workflow" } }).catch(() => {}); }
+        mark(i++, "ok", `Found ${full}`);
+      } else {
+        repo = $("#repoName").value.trim() || "card";
+        if (!/^[A-Za-z0-9._-]+$/.test(repo)) throw new Error("Card names can only use letters, numbers, dots, dashes and underscores.");
+        full = `${owner}/${repo}`;
+        mark(i, "run");
+        let exists = null;
+        try { exists = await gh(`/repos/${full}`, { token }); } catch (e) { if (e.status !== 404) throw e; }
+        if (exists) {
+          let isCard = false;
+          try { await gh(`/repos/${full}/contents/templates/catalog.json`, { token }); isCard = true; } catch {}
+          if (!isCard) throw new Error(`You already have a repo called <b>${repo}</b>. Pick a different card name.`);
+          mark(i++, "ok", `Using your existing card repo ${full}`);
+          mark(i++, "ok", "Template already in place");
+        } else {
+          await gh(`/repos/${TEMPLATE_REPO}/generate`, { method: "POST", token, body: { owner, name: repo, description: "My GSA Connect digital business card", private: false } })
+            .catch((e) => { throw new Error(e.status === 403 || e.status === 404 ? "GitHub refused to create the repo. Make sure the token has the <b>public_repo</b> and <b>workflow</b> boxes ticked (use the link in step 1)." : e.message); });
+          mark(i++, "ok", `Created ${full}`);
+          mark(i, "run");
+          for (let k = 0; k < 40; k++) { try { await gh(`/repos/${full}/contents/templates/catalog.json`, { token }); break; } catch { await sleep(1500); if (k === 39) throw new Error("GitHub is taking unusually long to copy the template. Try again in a minute; your details are saved."); } }
+          mark(i++, "ok");
+        }
+        mark(i, "run");
+        try { await gh(`/repos/${full}/pages`, { method: "POST", token, body: { build_type: "workflow" } }); }
+        catch (e) { if (e.status !== 409 && e.status !== 422) throw new Error("Couldn't turn on GitHub Pages: " + e.message); }
+        mark(i++, "ok");
+      }
+
+      // commit card.json + uploads
+      mark(i, "run");
+      const card = cleanCard();
+      card.siteUrl = card.siteUrl && !card.siteUrl.includes("yourname.github.io") ? card.siteUrl : "";
+      const files = [{ path: "card.json", base64: b64utf8(JSON.stringify(card, null, 2) + "\n") }];
+      if (S.photo) files.push({ path: "assets/photo.jpg", base64: S.photo.split(",")[1] }, { path: "assets/wallet-thumbnail.png", base64: S.thumb.split(",")[1] });
+      if (S.cv) files.push({ path: "assets/cv.pdf", base64: await fileB64(S.cv) });
+      const sha = await commitFiles(token, full, files, edit ? "Update my GSA Connect card" : "Set up my GSA Connect card");
+      mark(i++, "ok");
+
+      // wait for the deploy
+      mark(i, "run");
+      let result = "pending";
+      for (let k = 0; k < 75 && result === "pending"; k++) {
+        await sleep(4000);
+        try {
+          const runs = await gh(`/repos/${full}/actions/runs?head_sha=${sha}&per_page=1`, { token });
+          const run = runs.workflow_runs?.[0];
+          if (run?.status === "completed") result = run.conclusion;
+        } catch {}
+      }
+      const url = pagesUrl(owner, repo);
+      if (result === "success") mark(i, "ok", "Your card is live");
+      else if (result === "pending") mark(i, "ok", "Still publishing; your link will work in a minute or two");
+      else { mark(i, "bad", "The publish step failed"); throw new Error(`GitHub's build failed. Open <a href="https://github.com/${full}/actions" target="_blank" rel="noopener">your repo's Actions tab</a> to see why, then click Publish again.`); }
+
+      // done
+      store.del(DRAFT_KEY);
+      $("#pubForm").hidden = true; $("#done").hidden = false;
+      $("#doneUrl").textContent = url.replace(/^https:\/\//, ""); $("#doneUrl").href = $("#doneOpen").href = url;
+      $("#doneNfc").href = url + "nfc.html"; $("#doneEdit").href = url + "app/"; $("#doneEdit").textContent = url.replace(/^https:\/\//, "") + "app/";
+      $("#doneNote").textContent = result === "success" ? "Save the link: it never changes, even when you edit your card." : "GitHub is finishing up. If the link shows a 404, wait a minute and refresh.";
+      $("#doneCopy").onclick = async () => { try { await navigator.clipboard.writeText(url); $("#doneCopy").textContent = "Copied ✓"; } catch {} };
+      if (typeof qrcode === "function") {
+        const q = qrcode(0, "M"); q.addData(url); q.make();
+        const n = q.getModuleCount(); let d = "";
+        for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c} ${r}h1v1h-1z`;
+        $("#doneQr").innerHTML = `<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges" role="img" aria-label="QR code for your card"><path d="${d}"/></svg>`;
+      }
+      S.mode = "edit"; S.repo = full;
+      status("Published ✓");
+    } catch (e) {
+      const li = $(`#progress [data-i="${i}"]`); if (li && li.className === "run") li.className = "bad";
+      showErr(e.message || String(e));
+      status("Couldn't publish", "err");
+    } finally { btn.disabled = false; }
+  };
+
+  // ── start ────────────────────────────────────────────────
+  function begin(mode) {
+    S.mode = mode;
+    if (mode === "new") { S.card = BLANK(); S.photo = S.thumb = null; S.cv = null; S.repo = ""; S.assetBase = null; }
+    hydrate(); go(mode === "edit" ? (S.card.name ? "details" : "publish") : "details");
+  }
+  $("#startNew").onclick = () => begin("new");
+  $("#startEdit").onclick = async () => {
+    S.mode = "edit";
+    if (site) { try { await loadExisting(site, store.get(TOKEN_KEY)); return go("details"); } catch {} }
+    go("publish");
+    $("#loadHint").textContent = "Enter your card's repo (shown as yourname/repo on GitHub), then load your current details.";
+  };
+
+  (async function init() {
+    try {
+      const d = JSON.parse(store.get(DRAFT_KEY) || "null");
+      if (d?.card) {
+        $("#resumeHint").hidden = false;
+        $("#resume").onclick = (e) => { e.preventDefault(); Object.assign(S, { mode: d.mode, card: { ...BLANK(), ...d.card }, photo: d.photo, thumb: d.thumb, repo: d.repo || "" }); hydrate(); go(d.step && d.step !== "start" ? d.step : "details"); };
+        $("#discard").onclick = (e) => { e.preventDefault(); store.del(DRAFT_KEY); $("#resumeHint").hidden = true; };
+      }
+    } catch {}
+    if (site) { $("#startEdit").querySelector("span:last-child").textContent = `Update ${site}.`; }
+    catalog().catch(() => {});
+    go("start");
+    status("");
+  })();
+})();
+</script>
+</body>
+</html>

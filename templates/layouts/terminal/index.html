@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" class="gc-loading">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>GSA Connect</title>
+  <meta name="theme-color" content="#0d1117">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/vendor/qrcode.js" defer></script>
+  <script src="js/card.js" defer></script>
+</head>
+<body>
+  <!-- LAYOUT: Terminal — a shell session for coders & engineers. Edit card.json, not this file. -->
+  <main class="term">
+    <div class="bar">
+      <i></i><i></i><i></i>
+      <span class="bar-title">~/<span data-field="slug"></span> — <span data-field="brand.orgShort"></span> Connect</span>
+    </div>
+
+    <div class="screen">
+      <div class="who">
+        <div class="avatar"><img data-src="photo" alt=""><span class="initials" data-initials hidden></span></div>
+        <div>
+          <p class="cmd">whoami</p>
+          <h1 data-field="name"></h1>
+          <p class="out"><span data-field="title"></span> <span class="dim" data-field="pronouns"></span></p>
+          <p class="out dim" data-field="department"></p>
+          <p class="out ok" data-show="gsaRole">✔ <span data-field="gsaRole"></span></p>
+        </div>
+      </div>
+
+      <p class="cmd" data-show="headline">echo $MISSION</p>
+      <p class="out quote" data-field="headline"></p>
+
+      <p class="cmd">./connect --help</p>
+      <div class="keys">
+        <a class="key hot" href="#" data-action="save-contact"><span data-icon="contact"></span>save-contact</a>
+        <a class="key" data-href="email" data-prefix="mailto:"><span data-icon="email"></span>mail</a>
+        <a class="key" data-href="cv" target="_blank"><span data-icon="cv"></span>cv.pdf</a>
+        <a class="key" href="#" data-action="share"><span data-icon="share"></span>share</a>
+      </div>
+
+      <section data-section="bio">
+        <p class="cmd">cat README.md</p>
+        <p class="out" data-field="bio"></p>
+      </section>
+
+      <section data-section="researchInterests">
+        <p class="cmd">ls ./research</p>
+        <ul class="ls" data-list="researchInterests"><template><li data-item="."></li></template></ul>
+      </section>
+
+      <section data-section="projects">
+        <p class="cmd">ls -l ./projects</p>
+        <div class="rows" data-list="projects">
+          <template><a class="row" data-item-href="url"><span class="perm">drwxr-xr-x</span><strong data-item="title"></strong><span class="desc" data-item="description"></span></a></template>
+        </div>
+      </section>
+
+      <section data-section="publications">
+        <p class="cmd">git log --oneline papers/</p>
+        <div class="rows" data-list="publications">
+          <template><a class="row commit" data-item-href="url"><span class="hash" data-item="year"></span><strong data-item="title"></strong><span class="desc" data-item="venue"></span></a></template>
+        </div>
+      </section>
+
+      <section data-section="links">
+        <p class="cmd">cat ~/.links</p>
+        <div class="links" data-list="links">
+          <template><a class="lnk" data-item-href="url"><span data-item-icon="icon"></span><span data-item="label"></span></a></template>
+        </div>
+      </section>
+
+      <section class="qrline">
+        <div class="qr" data-qr></div>
+        <div>
+          <p class="cmd">qrencode $URL</p>
+          <p class="out"><a href="#" data-action="copy-link" data-card-url></a></p>
+          <p class="out dim">scan · tap · or copy</p>
+        </div>
+      </section>
+
+      <section data-wallet-group hidden>
+        <p class="cmd">wallet add --all</p>
+        <div class="wallet">
+          <a class="wbtn" data-wallet="apple" hidden><span data-icon="apple"></span><span><small>Add to</small>Apple Wallet</span></a>
+          <a class="wbtn" data-wallet="google" hidden><span data-icon="wallet"></span><span><small>Save to</small>Google Wallet</span></a>
+          <a class="wbtn" data-wallet="samsung" hidden><span data-icon="wallet"></span><span><small>Add to</small>Samsung Wallet</span></a>
+        </div>
+      </section>
+
+      <p class="cmd blink"></p>
+    </div>
+    <footer><span data-field="brand.org"></span> · <a class="powered" data-powered>Powered by <strong>ScholarTap</strong></a></footer>
+  </main>
+</body>
+</html>
