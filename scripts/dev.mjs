@@ -31,7 +31,7 @@ createServer(async (req, res) => {
   }
 }).listen(port, "127.0.0.1", () => {
   const link = `http://localhost:${port}/${openPath || ""}`;
-  console.log(`\n  GSA Connect → ${link}\n  (Ctrl+C to stop)\n`);
+  console.log(`\n  ScholarTap → ${link}\n  (Ctrl+C to stop)\n`);
   if (openPath !== null && !process.env.NO_OPEN) {
     const opener = process.platform === "darwin" ? "open" : process.platform === "win32" ? "explorer" : "xdg-open";
     execFile(opener, [link], () => {});

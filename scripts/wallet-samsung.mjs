@@ -28,12 +28,12 @@ export async function buildSamsung({ card, siteUrl, env }) {
       type: "generic",
       subType: "others",
       data: [{
-        refId: `gsa-connect-${card.slug || "card"}`,
+        refId: `scholartap-${card.slug || "card"}`,
         createdAt: now,
         updatedAt: now,
         language: "en",
         attributes: {
-          title: card.brand?.cardName || "GSA Connect",
+          title: card.brand?.cardName || "ScholarTap",
           subtitle: card.brand?.org || "",
           providerName: card.brand?.orgShort || "GSA",
           "logoImage": new URL("assets/wallet-logo.png", siteUrl).href,
@@ -50,7 +50,7 @@ export async function buildSamsung({ card, siteUrl, env }) {
           "csInfo": JSON.stringify({ call: card.phone || "", email: card.email || "", website: siteUrl }),
           appLinkName: "Open card",
           appLinkData: siteUrl,
-          noticeDesc: `Powered by ${card.poweredBy?.name || "ScholarTap"}`
+          noticeDesc: "ScholarTap · An initiative of GSA Connect, UGA"
         }
       }]
     }

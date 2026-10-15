@@ -1,6 +1,6 @@
 {
-  "name": "Classic · GSA Connect",
-  "short_name": "GSA Connect",
+  "name": "Classic · ScholarTap",
+  "short_name": "ScholarTap",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -1,8 +1,8 @@
 {
-  "name": "gsa-connect",
+  "name": "scholartap",
   "version": "1.0.0",
   "private": true,
-  "description": "UGA GSA Connect: one link to set up and host your digital business card. Powered by ScholarTap.",
+  "description": "ScholarTap: free digital business cards for graduate students. An initiative of GSA Connect, UGA Graduate Student Association.",
   "type": "module",
   "scripts": {
     "setup": "node scripts/dev.mjs --open app/",

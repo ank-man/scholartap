@@ -38,7 +38,7 @@ function fontsHref(fonts) {
 }
 
 function favicon(accent) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="${accent}"/><g fill="none" stroke-linecap="round" stroke-width="5"><circle cx="22" cy="32" r="4" fill="#fff" stroke="none"/><path d="M30 22a14 14 0 0 1 0 20M37 15a24 24 0 0 1 0 34M44 8a34 34 0 0 1 0 48" stroke="#fff"/></g></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="${accent}"/><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path d="M9 28.5 22 22l13 6.5L22 35z" fill="#fff" stroke-width="2.5"/><path d="M15 31.5v6.5c4.5 3 9.5 3 14 0v-6.5" stroke-width="3"/><path d="M35 28.5v8" stroke-width="2.5"/><path d="M41 22.5a12 12 0 0 1 0 17" stroke-width="3.6"/><path d="M47.5 17a20 20 0 0 1 0 28" stroke-width="3.6"/></g></svg>`;
 }
 
 function walletFor(t) {

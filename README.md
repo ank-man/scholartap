@@ -1,12 +1,16 @@
-# GSA Connect
+<p align="center"><img src="assets/brand/scholartap-mark.svg" width="72" alt="ScholarTap"></p>
 
-**One link to create your digital business card.** Built for UGA graduate & professional students: share your CV,
-research and links with a tap, a QR code, or from Apple / Google / Samsung Wallet. Free, hosted on your own GitHub.
-Powered by **ScholarTap**.
+# ScholarTap
 
-## 👉 Make your card: https://ank-man.github.io/gsa-connect/
+**Your research, one tap away.** The free digital business card for graduate & professional students: share your CV,
+publications, scholarly profiles and links with an NFC tap, a QR code, or from Apple / Google / Samsung Wallet.
+Hosted free on your own GitHub.
 
-1. **Your details.** Name, photo, CV, research, publications, links.
+*An initiative of **GSA Connect**, UGA Graduate Student Association. Student-led; not an official University of Georgia website.*
+
+## 👉 Make your card: https://ank-man.github.io/scholartap/
+
+1. **Your details.** Name, photo, CV, research, publications, plus LinkedIn, Google Scholar, ORCID, ResearchGate, Scopus, Web of Science, GitHub, X, Bluesky, Mastodon and more.
 2. **Pick a template.** 51 designs, one for every field (STEM, plants & insects, health, law, humanities, arts…), with a live preview of *your* card.
 3. **Publish.** Connect GitHub once. The app creates your own copy of this repo, saves your profile, turns on free hosting and tells you when it's live.
 
@@ -50,10 +54,10 @@ npm run template -- --list        # switch template from the terminal
 npm run catalog                   # after editing kit/themes.mjs or templates/layouts
 ```
 
-## For the GSA
+## For GSA Connect
 
 Add the Apple / Google / Samsung wallet secrets to a GitHub **organisation**, and every card created in that org
-gets wallet passes automatically. UGA colours and the text "UGA GSA" are used as text only. Official UGA marks
-need approval from UGA Brand & Licensing.
+gets wallet passes automatically. UGA colours are used as text and colour only. Official UGA marks need approval
+from UGA Brand & Licensing.
 
 MIT licensed.

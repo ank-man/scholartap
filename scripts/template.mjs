@@ -1,5 +1,5 @@
 // Template switching. Every card repo ships all layouts + theme styles in templates/,
-// so a card can become any of the GSA Connect templates without re-cloning.
+// so a card can become any of the ScholarTap templates without re-cloning.
 //
 //   npm run setup        → pick one in the form (live preview)
 //   card.json "template" → change it on GitHub; the CI build applies it
@@ -41,7 +41,7 @@ export async function applyTemplate({ root, dest = root, id }) {
   try {
     const mp = resolve(dest, "manifest.webmanifest");
     const m = JSON.parse(await readFile(mp, "utf8"));
-    m.name = `${t.name} · GSA Connect`;
+    m.name = `${t.name} · ScholarTap`;
     if (t.themeColor) m.theme_color = t.themeColor;
     if (t.bg) m.background_color = t.bg;
     await writeFile(mp, JSON.stringify(m, null, 2) + "\n");

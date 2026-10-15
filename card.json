@@ -125,16 +125,16 @@
     }
   ],
   "brand": {
-    "cardName": "GSA Connect",
-    "org": "UGA Graduate Student Association",
-    "orgShort": "UGA GSA"
+    "cardName": "ScholarTap",
+    "org": "An initiative of GSA Connect · UGA",
+    "orgShort": "ScholarTap"
   },
   "theme": {
     "accent": ""
   },
   "poweredBy": {
     "name": "ScholarTap",
-    "url": "https://scholartap.com"
+    "url": "https://ank-man.github.io/scholartap/"
   },
   "siteUrl": "",
   "wallet": {

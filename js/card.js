@@ -1,6 +1,6 @@
 /*!
- * GSA Connect Card — core renderer
- * Powered by ScholarTap
+ * ScholarTap card — core renderer
+ * An initiative of GSA Connect · UGA Graduate Student Association
  *
  * Reads card.json and fills any element in index.html that carries a data-* hook:
  *   data-field="path"        textContent from card.json (dot paths ok: "gsa.role")
@@ -21,6 +21,17 @@
   "use strict";
 
   const ICONS = {
+    researchgate: '<rect x="2.5" y="2.5" width="19" height="19" rx="5"/><text x="12" y="15.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="700" fill="currentColor" stroke="none">RG</text>',
+    semanticscholar: '<rect x="2.5" y="2.5" width="19" height="19" rx="5"/><text x="12" y="15.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="700" fill="currentColor" stroke="none">S2</text>',
+    scopus: '<rect x="2.5" y="2.5" width="19" height="19" rx="5"/><text x="12" y="15.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="700" fill="currentColor" stroke="none">Sc</text>',
+    webofscience: '<rect x="2.5" y="2.5" width="19" height="19" rx="5"/><text x="12" y="15.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="7" font-weight="700" fill="currentColor" stroke="none">WoS</text>',
+    academia: '<path d="M3 21h18M5 21V10M9.5 21V10M14.5 21V10M19 21V10M2.5 10 12 4l9.5 6z"/>',
+    osf: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/>',
+    x: '<path d="M4 4l16 16M20 4 4 20"/>',
+    bluesky: '<path d="M12 11c-1.4-2.8-5-6.5-7.4-6.5C3.2 4.5 3 6.6 3.5 8.8c.6 2.3 2.9 3.1 5.1 2.7-3 .6-3.6 2.7-2 4.3 2.6 2.6 4.2-.9 5.4-3.8 1.2 2.9 2.8 6.4 5.4 3.8 1.6-1.6 1-3.7-2-4.3 2.2.4 4.5-.4 5.1-2.7.5-2.2.3-4.3-1.1-4.3-2.4 0-6 3.7-7.4 6.5z"/>',
+    instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/>',
+    mastodon: '<path d="M20.5 12.5c0 3.7-3.5 5.8-8.5 5.8-1.3 0-2.6-.2-3.6-.5.2 1.5 1.6 2.3 4 2.2"/><path d="M3.5 12.5V9.4C3.5 6 6 4 12 4s8.5 2 8.5 5.4v3.1"/><path d="M8 13.5V9.6a2 2 0 0 1 4 0v2.6m0 0V9.6a2 2 0 0 1 4 0v3.9"/>',
+    youtube: '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z"/>',
     link: '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
     email: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
     phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',
@@ -49,9 +60,8 @@
     wallet: '<path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M16 14h.01"/>'
   };
   const ICON_ALIASES = {
-    "google scholar": "scholar", googlescholar: "scholar", researchgate: "research", lab: "research",
-    "linked in": "linkedin", x: "social", twitter: "social", bluesky: "social", mastodon: "social",
-    instagram: "social", threads: "social", youtube: "video", site: "website", web: "website",
+    "google scholar": "scholar", googlescholar: "scholar", lab: "research", "semantic scholar": "semanticscholar", "web of science": "webofscience", publons: "webofscience", "academia.edu": "academia", "x (twitter)": "x",
+    "linked in": "linkedin", twitter: "x", threads: "social", site: "website", web: "website",
     portfolio: "website", mail: "email", resume: "cv", pdf: "cv", publications: "book",
     google: "scholar", gsa: "users", "wifi-nfc": "nfc", tap: "nfc"
   };
@@ -91,7 +101,7 @@
       card.email && `EMAIL;TYPE=INTERNET,WORK:${card.email}`,
       card.phone && `TEL;TYPE=CELL:${card.phone}`,
       card.website && `URL:${card.website}`,
-      `URL;TYPE=GSA-Connect:${cardUrl(card)}`,
+      `URL;TYPE=ScholarTap:${cardUrl(card)}`,
       card.location && `ADR;TYPE=WORK:;;;${esc(card.location)};;;`,
       `NOTE:${esc([card.headline, card.bio].filter(Boolean).join(" — "))}`,
       "END:VCARD"
@@ -121,7 +131,7 @@
   }
 
   async function share(card) {
-    const data = { title: `${card.name} · GSA Connect`, text: card.headline || card.title || "", url: cardUrl(card) };
+    const data = { title: `${card.name} · ScholarTap`, text: card.headline || card.title || "", url: cardUrl(card) };
     if (navigator.share) { try { await navigator.share(data); return; } catch (_) { return; } }
     copyLink(card);
   }
@@ -201,9 +211,10 @@
     $$("[data-card-url]").forEach((el) => { el.textContent = cardUrl(card).replace(/^https?:\/\//, "").replace(/\/$/, ""); });
 
     // Powered-by
-    const pb = card.poweredBy || { name: "ScholarTap", url: "https://scholartap.com" };
+    const pb = card.poweredBy || { name: "ScholarTap", url: "https://ank-man.github.io/scholartap/" };
     $$("[data-powered]").forEach((el) => {
-      el.innerHTML = `Powered by <strong>${pb.name || "ScholarTap"}</strong>`;
+      el.innerHTML = `Made with <strong>${pb.name || "ScholarTap"}</strong>`;
+      el.title = "Make your own free research card";
       if (pb.url) { el.href = pb.url; el.target = "_blank"; el.rel = "noopener"; }
     });
 
@@ -221,7 +232,7 @@
     });
 
     // Document metadata
-    document.title = `${card.name} · ${card.brand?.cardName || "GSA Connect"}`;
+    document.title = `${card.name} · ${card.brand?.cardName || "ScholarTap"}`;
     const desc = card.headline || card.title || "";
     setMeta("description", desc);
     setMeta("og:title", document.title, "property");
@@ -271,6 +282,9 @@
     document.documentElement.classList.add("gc-ready");
     window.GSAConnect = { card, vcard: () => vcard(card), icon };
   }
+
+  // The setup app loads this file only for its icons.
+  if (document.currentScript?.hasAttribute("data-icons-only")) { window.GSAIcon = (n) => icon(n); return; }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();

@@ -15,7 +15,7 @@ export function toVCard(card) {
     card.email && `EMAIL;TYPE=INTERNET,WORK:${card.email}`,
     card.phone && `TEL;TYPE=CELL:${card.phone}`,
     card.website && `URL:${card.website}`,
-    card.siteUrl && `URL;TYPE=GSA-Connect:${card.siteUrl}`,
+    card.siteUrl && `URL;TYPE=ScholarTap:${card.siteUrl}`,
     ...(card.links || []).slice(0, 6).map((l) => `X-SOCIALPROFILE;TYPE=${esc(l.label)}:${l.url}`),
     card.location && `ADR;TYPE=WORK:;;;${esc(card.location)};;;`,
     (card.headline || card.bio) && `NOTE:${esc([card.headline, card.gsaRole].filter(Boolean).join(" — "))}`,

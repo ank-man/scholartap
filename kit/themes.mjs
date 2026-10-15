@@ -1,11 +1,11 @@
-// GSA Connect theme catalog. Each entry becomes its own repo: gsa-connect-<id>.
+// ScholarTap theme catalog (51 templates).
 //   layout   one of layouts/* (classic, scholar, minimal, midnight, officer, terminal, portfolio)
 //   fonts    [[head, weights], [body, weights], [mono, weights]?]  (Google Fonts)
 //   palette  accent, accent2, ink, muted, bg, surface, line, soft, strong   (+ card:[a,b,c] for midnight)
 //   motif    [name, colour, opacity]  (see motifs.mjs)
 //   persona  sample profile merged into card.json, written for that field
 //
-// Add a theme: copy an entry, change it, run `node tools/assemble.mjs <id>`.
+// Add a theme: copy an entry, change it, run `npm run catalog`.
 
 const L = {
   scholar: ["Google Scholar", "scholar"], orcid: ["ORCID", "orcid"], linkedin: ["LinkedIn", "linkedin"],

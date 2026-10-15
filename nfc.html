@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>NFC Card Writer</title>
+  <title>ScholarTap NFC Writer</title>
   <meta name="theme-color" content="#BA0C2F">
   <meta name="robots" content="noindex">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -67,7 +67,7 @@
 <main>
   <header>
     <h1>Program your NFC card</h1>
-    <p class="sub">Write your GSA Connect link onto any NFC tag, sticker or card (NTAG213/215/216). Anyone who taps it opens your card.</p>
+    <p class="sub">Write your ScholarTap link onto any NFC tag, sticker or card (NTAG213/215/216). Anyone who taps it opens your card.</p>
   </header>
 
   <section class="panel">
@@ -97,7 +97,7 @@
       <summary>Event mode &amp; advanced</summary>
       <div style="display:grid;gap:14px">
         <label class="switch">Batch mode: keep writing tag after tag<input type="checkbox" id="batch"></label>
-        <p class="note">For GSA tabling: write the same link (e.g. the GSA Connect gallery) to a stack of cards, or switch the link between people.</p>
+        <p class="note">For GSA tabling: write the same link (e.g. the ScholarTap sign-up page) to a stack of cards, or switch the link between people.</p>
         <hr style="border:0;border-top:1px solid var(--line);margin:0">
         <div class="warn"><b>Locking is permanent.</b> A locked tag can never be rewritten. Your card URL stays the same forever (you edit <code>card.json</code>, not the tag), so locking is safe once the link is final.</div>
         <label>Type LOCK to enable <input type="text" id="lockConfirm" autocomplete="off" autocapitalize="characters"></label>
@@ -129,7 +129,7 @@
     <p class="note">On iPhone? Use the free <b>NFC Tools</b> app: <i>Write → Add a record → URL</i>, then paste your link.</p>
   </section>
 
-  <footer>GSA Connect · Powered by <strong id="powered">ScholarTap</strong></footer>
+  <footer><strong id="powered">ScholarTap</strong> · An initiative of GSA Connect · UGA</footer>
 </main>
 
 <script src="js/vendor/qrcode.js"></script>

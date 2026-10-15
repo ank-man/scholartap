@@ -33,12 +33,12 @@ export async function buildApple({ card, root, dist, siteUrl, env }) {
       signerKeyPassphrase: env.APPLE_SIGNER_KEY_PASSPHRASE || undefined
     },
     {
-      serialNumber: `gsa-connect-${card.slug || "card"}`,
+      serialNumber: `scholartap-${card.slug || "card"}`,
       passTypeIdentifier: env.APPLE_PASS_TYPE_ID,
       teamIdentifier: env.APPLE_TEAM_ID,
-      organizationName: card.brand?.org || "Graduate Student Association",
-      description: `${card.brand?.cardName || "GSA Connect"} card for ${card.name}`,
-      logoText: card.brand?.cardName || "GSA Connect",
+      organizationName: "ScholarTap · GSA Connect UGA",
+      description: `${card.brand?.cardName || "ScholarTap"} card for ${card.name}`,
+      logoText: card.brand?.cardName || "ScholarTap",
       backgroundColor: hexToRgb(w.backgroundColor || "#BA0C2F"),
       foregroundColor: hexToRgb(w.foregroundColor || "#FFFFFF"),
       labelColor: hexToRgb(w.labelColor || "#F6E7EA")
@@ -59,7 +59,7 @@ export async function buildApple({ card, root, dist, siteUrl, env }) {
     ["research", "RESEARCH", (card.researchInterests || []).join(", ")],
     ["bio", "ABOUT", card.bio],
     ...(card.links || []).map((l, i) => [`link${i}`, l.label.toUpperCase(), l.url]),
-    ["powered", "", `Powered by ${card.poweredBy?.name || "ScholarTap"}`]
+    ["powered", "", "ScholarTap · An initiative of GSA Connect, UGA Graduate Student Association"]
   ];
   for (const [key, label, value] of back) if (value) pass.backFields.push({ key, label, value, dataDetectorTypes: ["PKDataDetectorTypeLink", "PKDataDetectorTypePhoneNumber"] });
 
