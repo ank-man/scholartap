@@ -324,6 +324,24 @@
     .prof label { gap: 2px; font-size: 12px; }
     .prof input { min-height: 38px; padding: 7px 10px; font-size: 14px; }
     @media (max-width: 560px) { .profiles { grid-template-columns: 1fr; } }
+    /* Taps section */
+    .taps-sec { background: radial-gradient(60% 80% at 90% 20%, color-mix(in srgb, #7c4dff 14%, transparent), transparent 70%), radial-gradient(50% 70% at 0% 100%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%); }
+    .taps-stage { display: grid; place-items: center; }
+    .taps-phone { width: min(320px, 100%); border-radius: 40px; padding: 26px 18px 18px; background: #0d0b0c; color: #f4efec; display: grid; gap: 10px; border: 8px solid #222; box-shadow: 0 40px 80px -30px rgba(40,10,30,.6); font-size: 14px; }
+    .taps-pair { display: flex; justify-content: center; align-items: center; margin-top: 8px; }
+    .tav { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; font: 700 24px Fraunces, serif; color: #fff; border: 4px solid #0d0b0c; flex: none; }
+    .tav.a { background: #BA0C2F; } .tav.b { background: #2e7d32; } .tav.c { background: #7c4dff; } .tav.d { background: #e0701c; }
+    .tav.s { width: 40px; height: 40px; font-size: 14px; border-width: 0; }
+    .tswap { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #2fd27a; margin: 0 -12px; z-index: 1; font-weight: 700; animation: tpop 2.4s infinite; }
+    @keyframes tpop { 0%, 70%, 100% { transform: scale(1) rotate(0); } 80% { transform: scale(1.25) rotate(180deg); } }
+    .taps-h { text-align: center; font: 700 22px Fraunces, serif; }
+    .taps-p { text-align: center; color: #a59da0; margin-top: -6px; margin-bottom: 6px; }
+    .taps-row { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 16px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.08); }
+    .taps-row > div { flex: 1; min-width: 0; } .taps-row b { display: block; } .taps-row small { color: #a59da0; font-size: 12px; }
+    .tbtn { background: #BA0C2F; color: #fff; border-radius: 999px; padding: 6px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .taps-dock { justify-self: center; display: flex; align-items: center; gap: 16px; padding: 6px 16px; border-radius: 999px; background: rgba(255,255,255,.08); color: #a59da0; font-weight: 600; margin-top: 6px; }
+    .tfab { width: 40px; height: 40px; border-radius: 50%; background: #BA0C2F; color: #fff; display: grid; place-items: center; font-size: 20px; }
+    .lfoot .credit { margin-top: 8px; font-size: 13px; opacity: .85; }
   </style>
 </head>
 <body>
@@ -333,9 +351,10 @@
       <div class="wrap lnav-in">
         <a class="logo" href="./" aria-label="ScholarTap home"><img src="../assets/brand/scholartap-mark.svg" alt=""><span>Scholar<em>Tap</em></span></a>
         <div class="lnav-links">
-          <a href="#features">Features</a><a href="#templates">Templates</a><a href="#nfc">NFC &amp; Wallet</a><a href="#faq">FAQ</a>
+          <a href="#features">Features</a><a href="#taps">Taps</a><a href="#templates">Templates</a><a href="#nfc">NFC &amp; Wallet</a><a href="#faq">FAQ</a>
         </div>
         <div class="lnav-cta">
+          <a class="btn ghost" href="../taps/">My taps</a>
           <button class="btn ghost" type="button" data-start="edit">Edit my card</button>
           <button class="btn primary" type="button" data-start="new">Create your card</button>
         </div>
@@ -387,7 +406,7 @@
         <div class="stat"><b>11</b><span>fields of study</span></div>
         <div class="stat"><b>3</b><span>wallets supported</span></div>
         <div class="stat"><b>$0</b><span>to use, forever</span></div>
-        <p class="strip-note">Built by graduate students, for graduate students: a <b>GSA Connect</b> initiative at the University of Georgia.</p>
+        <p class="strip-note">Built by graduate students, for graduate students: a <b>GSA Connect</b> initiative at the University of Georgia. Developed by <b>Ankush Sharma</b>.</p>
       </div>
     </section>
 
@@ -402,6 +421,35 @@
           <article class="feat"><div class="ficon"><svg viewBox="0 0 24 24"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M16 14h.01"/></svg></div><h3>Apple, Google &amp; Samsung Wallet</h3><p>Keep your card next to your boarding passes. Show the QR from your lock screen.</p></article>
           <article class="feat"><div class="ficon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></div><h3>A design for your field</h3><p>51 templates, from entomology and chemistry to law, music and medicine. Switch any time.</p></article>
           <article class="feat"><div class="ficon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><h3>Yours, not ours</h3><p>Hosted free on your own GitHub. Your data, your link, no ads, no subscription.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec taps-sec" id="taps">
+      <div class="wrap split">
+        <div>
+          <p class="eyebrow">New · Taps</p>
+          <h2 class="h2">Swap cards. Both of you keep them.</h2>
+          <p class="sub">Tap or scan someone's ScholarTap and hit <b>Swap cards</b>. They get yours in their taps, you get theirs, and if it's mutual you'll both know. No card yet? They can still leave their details on yours.</p>
+          <ul class="ticks">
+            <li><span><b>Inbox:</b> see everyone who tapped you, with where you met and their note</span></li>
+            <li><span><b>Event mode:</b> every tap at the poster session gets tagged for you</span></li>
+            <li><span><b>Scan:</b> a built-in QR scanner, no app to install</span></li>
+            <li><span><b>Notes, tags and follow-up reminders</b>, plus export to Contacts or a spreadsheet</span></li>
+            <li><span><b>Lock-screen QR:</b> one-tap wallpaper, so your card is always one glance away</span></li>
+            <li><span><b>Home screen app</b> with long-press shortcuts: My QR, Scan, Taps</span></li>
+          </ul>
+          <div class="hero-ctas"><a class="btn primary xl" href="../taps/">Open my Taps <span aria-hidden="true">→</span></a></div>
+        </div>
+        <div class="taps-stage" aria-hidden="true">
+          <div class="taps-phone">
+            <div class="taps-pair"><span class="tav a">IT</span><span class="tswap">⇄</span><span class="tav b">RD</span></div>
+            <div class="taps-h">It's mutual 🤝</div>
+            <div class="taps-p">Rosa will see you in her taps.</div>
+            <div class="taps-row"><span class="tav s c">MK</span><div><b>Maya K.</b><small>tapped you · Poster Night · 2m</small></div><span class="tbtn">Tap back</span></div>
+            <div class="taps-row"><span class="tav s d">JL</span><div><b>Jun Li</b><small>📍 ESA 2026 · follow up</small></div></div>
+            <div class="taps-dock"><span>Me</span><span class="tfab"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></svg></span><span>Taps</span></div>
+          </div>
         </div>
       </div>
     </section>
@@ -442,6 +490,7 @@
             <li>Apple, Google &amp; Samsung Wallet passes</li>
             <li>Edit your card forever: tags and QR codes never go stale</li>
           </ul>
+          <div class="hero-ctas"><a class="btn light xl" href="../taps/?view=nfc">Burn your own NFC card <span aria-hidden="true">→</span></a></div>
         </div>
         <div class="nfc-stage" aria-hidden="true">
           <div class="phone-back"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div></div>
@@ -463,7 +512,8 @@
           <details><summary>Do I need a GitHub account?</summary><p>Yes, a free one. It's what keeps your card yours: your profile lives in your own repository, and your link never changes. Publishing walks you through it in under two minutes.</p></details>
           <details><summary>Can I change my card later?</summary><p>Any time. Open <code>your-link/app/</code>, choose <b>Edit my card</b>, change what you like, including the template, and save. Your QR codes and NFC tags keep working.</p></details>
           <details><summary>Does NFC work with iPhones?</summary><p>iPhones read ScholarTap tags instantly, with no app. To <em>write</em> a tag you need Chrome on Android, or the free NFC Tools app on iPhone. The writer page explains both.</p></details>
-          <details><summary>What happens to my GitHub token?</summary><p>It stays in your browser and is only sent to GitHub to create and update your card. Nothing is stored on any ScholarTap server, because there isn't one. You can revoke it any time in GitHub settings.</p></details>
+          <details><summary>What happens to my GitHub token?</summary><p>It stays in your browser and is only sent to GitHub to create and update your card. ScholarTap never stores it. You can revoke it any time in GitHub settings.</p></details>
+          <details><summary>What does Taps store?</summary><p>Only what you'd expect: who swapped cards with whom, where you met and any note, plus a daily view count for your card. Sign-in uses your GitHub username, nothing else. Without signing in, your taps stay on your phone only.</p></details>
           <details><summary>Is this an official UGA service?</summary><p>ScholarTap is a student-led initiative of GSA Connect, part of the UGA Graduate Student Association. It is not an official University of Georgia website.</p></details>
         </div>
       </div>
@@ -482,10 +532,12 @@
         <div>
           <a class="logo" href="./"><img src="../assets/brand/scholartap-mark.svg" alt=""><span>Scholar<em>Tap</em></span></a>
           <p>An initiative of <b>GSA Connect</b> · UGA Graduate Student Association.<br>Student-led; not an official University of Georgia website.</p>
+          <p class="credit">Developed by <b>Ankush Sharma</b> at the University of Georgia.</p>
         </div>
         <nav class="lfoot-links" aria-label="Footer">
           <button type="button" data-start="new">Create a card</button>
           <button type="button" data-start="edit">Edit my card</button>
+          <a href="../taps/">My taps</a>
           <a href="../nfc.html">NFC writer</a>
           <a href="https://github.com/ank-man/scholartap" target="_blank" rel="noopener">Source on GitHub</a>
         </nav>
@@ -659,7 +711,7 @@
     </aside>
   </div>
   <button class="btn primary peek" type="button" id="peek" hidden>👁 Preview</button>
-  <footer id="appFoot" hidden><strong>ScholarTap</strong> · An initiative of GSA Connect · UGA Graduate Student Association</footer>
+  <footer id="appFoot" hidden><strong>ScholarTap</strong> · An initiative of GSA Connect · UGA Graduate Student Association · Developed by Ankush Sharma at the University of Georgia</footer>
 
 <script src="../js/vendor/qrcode.js"></script>
 <script src="../js/card.js" data-icons-only></script>

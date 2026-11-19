@@ -78,7 +78,7 @@
   }
 
   function cardUrl(card) {
-    return (card.siteUrl && card.siteUrl.trim()) || location.href.split("#")[0].replace(/index\.html$/, "");
+    return (card.siteUrl && card.siteUrl.trim()) || location.href.split(/[?#]/)[0].replace(/index\.html$/, "");
   }
 
   function initials(name = "") {
@@ -207,7 +207,7 @@
         list.appendChild(frag);
       });
     });
-    $$("[data-qr]").forEach((el) => renderQR(el, cardUrl(card)));
+    $$("[data-qr]").forEach((el) => renderQR(el, cardUrl(card) + "?via=qr"));
     $$("[data-card-url]").forEach((el) => { el.textContent = cardUrl(card).replace(/^https?:\/\//, "").replace(/\/$/, ""); });
 
     // Powered-by
@@ -216,6 +216,7 @@
       el.innerHTML = `Made with <strong>${pb.name || "ScholarTap"}</strong>`;
       el.title = "Make your own free research card";
       if (pb.url) { el.href = pb.url; el.target = "_blank"; el.rel = "noopener"; }
+      if (!el.nextElementSibling?.classList.contains("gc-credit")) el.insertAdjacentHTML("afterend", '<span class="gc-credit">Developed by Ankush Sharma · University of Georgia</span>');
     });
 
     // Actions
@@ -247,17 +248,53 @@
   }
 
   // ---------- wallet buttons ----------
-  async function wallet() {
+  async function wallet(card, hub) {
     const btns = $$("[data-wallet]");
     if (!btns.length) return;
     let w = {};
     try { const r = await fetch("wallet/wallet.json", { cache: "no-store" }); if (r.ok) w = await r.json(); } catch (_) {}
+    // No Google keys on this card? The shared ScholarTap relay can sign the pass instead.
+    if (!w.google && hub?.relay && hub.features?.googleWallet) w.google = `${hub.relay}/wallet/google?card=${encodeURIComponent(cardUrl(card))}`;
     let any = false;
     btns.forEach((b) => {
       const url = w[b.dataset.wallet];
       if (url) { b.href = url; b.hidden = false; any = true; } else b.hidden = true;
     });
     $$("[data-wallet-group]").forEach((g) => { g.hidden = !any; });
+  }
+
+  // ---------- Taps: swap cards, view counts ----------
+  // The Taps hub is one shared page (default: <poweredBy.url>taps/). It knows who the visitor is,
+  // so "Swap cards" opens it; the relay it names records the swap and counts anonymous views.
+  function hubUrl(card) {
+    if (card.taps?.hub) return card.taps.hub.replace(/\/?$/, "/");
+    if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return `${location.origin}/taps/`;
+    const base = card.poweredBy?.url || "https://ank-man.github.io/scholartap/";
+    return base.replace(/\/?$/, "/") + "taps/";
+  }
+  async function taps(card) {
+    if (card.taps?.enabled === false || window.GSA_CARD) return null;
+    const hub = hubUrl(card);
+    const via = new URLSearchParams(location.search).get("via");
+    dock(card, hub);
+    let cfg = {};
+    try { cfg = await (await fetch(hub + "config.json", { cache: "no-cache" })).json(); } catch (_) {}
+    const relay = (cfg.relay || "").replace(/\/$/, "");
+    if (!relay) return { hub };
+    try { navigator.sendBeacon?.(relay + "/hit", new Blob([JSON.stringify({ card: cardUrl(card), via })], { type: "text/plain" })); } catch (_) {}
+    let features = {};
+    try { features = (await (await fetch(relay + "/")).json()).features || {}; } catch (_) {}
+    if (via) history.replaceState(null, "", location.pathname + location.hash);
+    return { hub, relay, features };
+  }
+  function dock(card, hub) {
+    if (document.querySelector(".gc-dock")) return;
+    const first = (card.name || "").split(" ")[0] || "them";
+    const d = document.createElement("div");
+    d.className = "gc-dock";
+    d.innerHTML = `<a class="gc-swap" href="${hub}?swap=${encodeURIComponent(cardUrl(card))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></svg><span>Swap cards with ${first.replace(/[<>&"]/g, "")}</span></a>`;
+    document.body.appendChild(d);
+    document.body.classList.add("gc-has-dock");
   }
 
   async function init() {
@@ -277,7 +314,8 @@
       return;
     }
     bind(card);
-    await wallet();
+    const hub = await taps(card);
+    await wallet(card, hub);
     document.documentElement.classList.remove("gc-loading");
     document.documentElement.classList.add("gc-ready");
     window.GSAConnect = { card, vcard: () => vcard(card), icon };

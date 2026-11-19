@@ -1,0 +1,21 @@
+# ScholarTap Taps relay on Cloudflare Workers + D1. See docs/TAPS.md.
+#   npx wrangler d1 create scholartap          → paste the database_id below
+#   npx wrangler d1 execute scholartap --remote --file relay/schema.sql
+#   npx wrangler secret put SESSION_SECRET     → any long random string
+#   npx wrangler deploy
+name = "scholartap-relay"
+main = "src/worker.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Extra origins allowed as sign-in return pages (comma-separated). *.github.io and localhost are always allowed.
+HUB_ORIGINS = ""
+
+[[d1_databases]]
+binding = "DB"
+database_name = "scholartap"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# Optional secrets (npx wrangler secret put NAME):
+#   GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET   one-tap "Sign in with GitHub" (OAuth app; callback <relay>/auth/github/callback)
+#   GOOGLE_WALLET_ISSUER_ID, GOOGLE_WALLET_SA_KEY   "Save to Google Wallet" on every card, no per-student keys

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ScholarTap Taps</title>
+  <meta name="description" content="Your ScholarTap: your QR, the people you've swapped cards with, and who tapped you.">
+  <meta name="theme-color" content="#0d0b0c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Taps">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="../assets/brand/scholartap-mark.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="taps.css">
+  <script src="../js/vendor/qrcode.js" defer></script>
+  <script src="app.js" type="module"></script>
+</head>
+<body>
+  <div class="aura" aria-hidden="true"></div>
+
+  <!-- Sign in / set up -->
+  <section class="view" id="v-welcome" hidden>
+    <div class="hero">
+      <img src="../assets/brand/scholartap-mark.svg" alt="" class="mark">
+      <h1>Your taps,<br><span class="grad">all in one place.</span></h1>
+      <p class="lead">Swap cards in one tap, see who tapped you, and keep everyone you meet, from posters to parties.</p>
+    </div>
+    <div class="stack">
+      <button class="btn primary big" id="signGithub" hidden><span class="i" data-i="github"></span>Continue with GitHub</button>
+      <details class="card" id="tokenBox">
+        <summary>Use the GitHub token from your card setup</summary>
+        <form id="tokenForm" class="stack tight">
+          <input id="tokenIn" type="password" placeholder="ghp_…" autocomplete="off" spellcheck="false" aria-label="GitHub token">
+          <button class="btn" type="submit">Sign in</button>
+          <p class="fine">We read your GitHub username once and forget the token. It isn't stored anywhere.</p>
+        </form>
+      </details>
+      <div class="or"><span>or, no account</span></div>
+      <form id="linkForm" class="card stack tight">
+        <label for="myLink">Your card link</label>
+        <input id="myLink" type="url" inputmode="url" placeholder="https://you.github.io/card/" autocomplete="url">
+        <button class="btn" type="submit">Use this card on this phone</button>
+        <p class="fine">Your QR and saved taps stay on this device. Sign in to get notified when someone taps you.</p>
+      </form>
+      <a class="btn ghost" href="../app/">✨ Don't have a card? Make one in 2 minutes</a>
+    </div>
+    <p class="credit">ScholarTap · developed by <b>Ankush Sharma</b> at the University of Georgia</p>
+  </section>
+
+  <!-- Swap with someone (arrived from their card / a scan) -->
+  <section class="view" id="v-swap" hidden>
+    <div class="swap-pair" aria-hidden="true">
+      <div class="bubble avatar" id="swapMe"></div>
+      <div class="swap-arrows"><span class="i" data-i="swap"></span></div>
+      <div class="bubble avatar" id="swapThem"></div>
+    </div>
+    <h1 class="center" id="swapTitle">Swap cards</h1>
+    <p class="lead center" id="swapSub"></p>
+
+    <form id="swapForm" class="card stack tight" hidden>
+      <label for="swapEvent">Where'd you meet? <span class="opt">optional</span></label>
+      <input id="swapEvent" list="eventList" maxlength="120" placeholder="Poster night, lab tour, conference…">
+      <datalist id="eventList"></datalist>
+      <label for="swapNote">Note for them <span class="opt">optional</span></label>
+      <input id="swapNote" maxlength="300" placeholder="Great talk! Let's grab coffee ☕">
+      <button class="btn primary big" type="submit"><span class="i" data-i="swap"></span>Swap cards</button>
+      <p class="fine" id="swapFine"></p>
+    </form>
+
+    <form id="guestForm" class="card stack tight" hidden>
+      <p class="fine strong">No card yet? Leave your details and they'll see you in their taps.</p>
+      <input id="gName" required maxlength="80" placeholder="Your name" autocomplete="name">
+      <input id="gEmail" type="email" maxlength="200" placeholder="Email" autocomplete="email">
+      <input id="gPhone" type="tel" maxlength="40" placeholder="Phone (optional)" autocomplete="tel">
+      <input id="gLink" type="url" maxlength="300" placeholder="LinkedIn or website (optional)" autocomplete="url">
+      <input id="gNote" maxlength="300" placeholder="Where'd you meet? / a note">
+      <input id="gWebsite" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn primary big" type="submit">Send my details</button>
+    </form>
+
+    <div class="stack" id="swapAfter" hidden>
+      <button class="btn big" id="swapSaveVcf"><span class="i" data-i="contact"></span>Save to my phone contacts</button>
+      <a class="btn" id="swapBack">Back to their card</a>
+      <button class="btn ghost" id="swapHome">Open my taps</button>
+    </div>
+    <div class="stack" id="swapGuestCta" hidden>
+      <a class="btn ghost" href="../app/">✨ Make your own ScholarTap, free</a>
+      <button class="btn ghost" id="swapSignIn">I have one: sign in</button>
+    </div>
+    <p class="credit">ScholarTap · developed by <b>Ankush Sharma</b> at the University of Georgia</p>
+  </section>
+
+  <!-- Me -->
+  <section class="view" id="v-me" hidden>
+    <header class="me-head">
+      <div class="avatar" id="meAvatar"></div>
+      <div>
+        <h1 id="meName"></h1>
+        <p class="sub" id="meTitle"></p>
+      </div>
+      <button class="icon-btn" id="meMenu" aria-label="Settings"><span class="i" data-i="dots"></span></button>
+    </header>
+
+    <button class="qr-card" id="qrCard" aria-label="Show my QR full screen">
+      <div class="qr" id="meQr"></div>
+      <span class="qr-hint">Tap for full screen · scan to swap</span>
+    </button>
+
+    <div class="event-pill" id="eventPill">
+      <span class="dot"></span>
+      <input id="eventIn" maxlength="120" placeholder="Event mode: where are you today?" aria-label="Current event">
+    </div>
+
+    <div class="grid-actions">
+      <button class="tile" id="aShare"><span class="i" data-i="share"></span>Share</button>
+      <button class="tile" id="aScan"><span class="i" data-i="scan"></span>Scan</button>
+      <a class="tile" id="aWallet"><span class="i" data-i="wallet"></span>Wallet</a>
+      <button class="tile" id="aWallpaper"><span class="i" data-i="phone"></span>Lock screen</button>
+      <a class="tile" id="aNfc" href="?view=nfc"><span class="i" data-i="nfc"></span>Burn NFC</a>
+      <a class="tile" id="aCard" target="_blank" rel="noopener"><span class="i" data-i="open"></span>My card</a>
+    </div>
+
+    <div class="stats card" id="stats" hidden>
+      <div><b id="stViews">0</b><span>views · 30d</span></div>
+      <div><b id="stTaps">0</b><span>taps · 30d</span></div>
+      <div><b id="stNfc">0</b><span>via NFC</span></div>
+      <svg id="stSpark" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </div>
+
+    <div class="card install" id="installCard" hidden>
+      <b>Put ScholarTap on your home screen</b>
+      <p class="fine" id="installHow"></p>
+      <button class="btn" id="installBtn" hidden>Install</button>
+    </div>
+    <p class="credit">ScholarTap · developed by <b>Ankush Sharma</b> at the University of Georgia</p>
+  </section>
+
+  <!-- Taps -->
+  <section class="view" id="v-taps" hidden>
+    <h1 class="page">Taps</h1>
+    <div class="inbox" id="inbox" hidden>
+      <h2>New <span class="count" id="inboxCount"></span></h2>
+      <div class="list" id="inboxList"></div>
+    </div>
+    <div class="searchbar">
+      <input id="q" type="search" placeholder="Search name, tag, event…" aria-label="Search taps">
+      <button class="icon-btn" id="exportBtn" aria-label="Export"><span class="i" data-i="download"></span></button>
+    </div>
+    <div class="chips" id="tagChips"></div>
+    <div class="list" id="tapList"></div>
+    <div class="empty" id="tapEmpty" hidden>
+      <p class="big-emoji">🤝</p>
+      <p><b>No taps yet.</b><br>Scan someone's ScholarTap or have them scan yours.</p>
+      <button class="btn primary" id="emptyScan">Scan a card</button>
+    </div>
+  </section>
+
+  <!-- Scan -->
+  <section class="view" id="v-scan" hidden>
+    <h1 class="page">Scan</h1>
+    <div class="cam"><video id="cam" playsinline muted></video><div class="reticle"></div><p class="cam-msg" id="camMsg">Point at a ScholarTap QR</p></div>
+    <form id="pasteForm" class="row">
+      <input id="pasteIn" type="url" inputmode="url" placeholder="…or paste a card link">
+      <button class="btn" type="submit">Go</button>
+    </form>
+  </section>
+
+  <!-- Burn an NFC card -->
+  <section class="view" id="v-nfc" hidden>
+    <h1 class="page">Burn your NFC card</h1>
+    <p class="lead">Hold a blank NFC card or sticker to the back of your phone. Your card link is written in a second, and any phone that taps it opens your ScholarTap.</p>
+    <button class="burn" id="burnBtn" type="button"><span class="burn-ring"></span><span class="i" data-i="nfc"></span><span id="burnLabel">Tap to start</span></button>
+    <p class="center fine" id="burnStatus"></p>
+    <div class="card stack tight">
+      <label>Link to write<input id="burnUrl" type="url" inputmode="url"></label>
+      <label class="check"><input type="checkbox" id="burnBatch"> Batch mode: keep writing card after card <span class="opt" id="burnCount"></span></label>
+      <label class="check"><input type="checkbox" id="burnLock"> Lock each card after writing <span class="opt">(permanent, can't be rewritten)</span></label>
+      <button class="btn" type="button" id="burnVerify">Check a card: read what's on it</button>
+    </div>
+    <div class="card" id="burnNoNfc" hidden>
+      <b>This browser can't write NFC.</b>
+      <p class="fine">Writing works in Chrome on Android. On iPhone, copy your link and write it with the free <b>NFC Tools</b> app (Write → Add a record → URL). Any iPhone can <em>read</em> your card with no app.</p>
+      <button class="btn small" type="button" id="burnCopy">Copy my link</button>
+    </div>
+    <p class="fine">Tip: NTAG213/215 cards and stickers cost about $1. Your link never changes, so a burned card keeps working when you edit your ScholarTap.</p>
+  </section>
+
+  <!-- Contact sheet -->
+  <dialog id="sheet" class="sheet">
+    <form method="dialog" class="sheet-in" id="sheetForm">
+      <div class="sheet-head">
+        <div class="avatar" id="shAvatar"></div>
+        <div><h2 id="shName"></h2><p class="sub" id="shTitle"></p></div>
+      </div>
+      <div class="row wrap" id="shActions"></div>
+      <label>Where you met<input id="shEvent" maxlength="120"></label>
+      <label><span>Tags <span class="opt">comma separated</span></span><input id="shTags" maxlength="200" placeholder="lab, collab, job lead"></label>
+      <label>Notes<textarea id="shNote" maxlength="2000" rows="3"></textarea></label>
+      <label>Follow up on<input id="shFollow" type="date"></label>
+      <div class="row">
+        <button class="btn danger" value="delete" id="shDelete">Remove</button>
+        <button class="btn primary" value="save">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Settings -->
+  <dialog id="settings" class="sheet">
+    <form method="dialog" class="sheet-in">
+      <h2>Settings</h2>
+      <p class="fine" id="setWho"></p>
+      <label>My card link<input id="setLink" type="url"></label>
+      <button class="btn" value="relink" id="setRelink">Update card</button>
+      <button class="btn" value="theme" id="setTheme">Theme: auto</button>
+      <button class="btn" value="signout" id="setSignout">Sign out on this phone</button>
+      <button class="btn ghost" value="close">Close</button>
+    </form>
+  </dialog>
+
+  <!-- Fullscreen QR -->
+  <div class="fullqr" id="fullqr" hidden>
+    <div class="fullqr-in">
+      <div class="qr" id="fullQrBox"></div>
+      <p id="fullName"></p>
+      <p class="fine">Scan to swap cards</p>
+    </div>
+  </div>
+
+  <nav class="tabbar" id="tabbar" hidden>
+    <button data-tab="me"><span class="i" data-i="qr"></span>Me</button>
+    <button data-tab="scan" class="fab" aria-label="Scan"><span class="i" data-i="scan"></span></button>
+    <button data-tab="taps"><span class="i" data-i="users"></span>Taps<span class="badge" id="tabBadge" hidden></span></button>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+</body>
+</html>

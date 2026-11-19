@@ -5,3 +5,5 @@ dist/
 *.pem
 *.key
 service-account*.json
+relay/local.db*
+relay/.wrangler/

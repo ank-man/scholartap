@@ -37,3 +37,16 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Taps dock: floating "Swap cards" pill on every template */
+.gc-dock { position: fixed; left: 0; right: 0; bottom: calc(14px + env(safe-area-inset-bottom)); display: flex; justify-content: center; z-index: 40; pointer-events: none; animation: gc-up .5s .4s both cubic-bezier(.2,.9,.3,1.2); }
+.gc-swap { pointer-events: auto; display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px; text-decoration: none;
+  background: rgba(16,12,14,.86); color: #fff; font: 600 15px/1 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 14px 34px -12px rgba(0,0,0,.55), 0 0 0 4px color-mix(in srgb, var(--accent, #BA0C2F) 28%, transparent); }
+.gc-swap svg { width: 20px; height: 20px; color: var(--accent, #BA0C2F); filter: brightness(1.4); }
+.gc-swap:active { transform: scale(.97); }
+.gc-swap:focus-visible { outline: 3px solid var(--accent, #BA0C2F); outline-offset: 3px; }
+.gc-has-dock { padding-bottom: 84px; }
+@keyframes gc-up { from { transform: translateY(30px); opacity: 0; } }
+.gc-credit { display: block; font-size: 11.5px; opacity: .7; letter-spacing: .02em; }
