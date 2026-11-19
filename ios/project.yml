@@ -1,0 +1,32 @@
+# ScholarTap NFC: native iPhone writer for NFC business cards (Safari can't write NFC; Core NFC can).
+#   brew install xcodegen && cd ios && xcodegen && open ScholarTapNFC.xcodeproj
+# Set your Team in Signing & Capabilities, plug in an iPhone 7 or newer, Run.
+name: ScholarTapNFC
+options:
+  bundleIdPrefix: edu.uga.gsa.scholartap
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  ScholarTapNFC:
+    type: application
+    platform: iOS
+    sources: [ScholarTapNFC]
+    info:
+      path: ScholarTapNFC/Info.plist
+      properties:
+        CFBundleDisplayName: ScholarTap NFC
+        NFCReaderUsageDescription: ScholarTap writes your card link onto NFC business cards and stickers.
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        CFBundleURLTypes:
+          - CFBundleURLName: edu.uga.gsa.scholartap.nfc
+            CFBundleURLSchemes: [scholartap-nfc]
+    entitlements:
+      path: ScholarTapNFC/ScholarTapNFC.entitlements
+      properties:
+        com.apple.developer.nfc.readersession.formats: [NDEF, TAG]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: edu.uga.gsa.scholartap.nfc
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1"

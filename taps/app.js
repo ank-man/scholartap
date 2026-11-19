@@ -440,12 +440,17 @@ function renderBurn() {
   const m = me(); if (!m) return show("welcome");
   if (!$("#burnUrl").value) $("#burnUrl").value = qrLink(m.card, "nfc");
   $("#burnNoNfc").hidden = canNfc();
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  $("#burnIos").hidden = !ios;
+  $("#burnNoTitle").textContent = ios ? "Burn from your iPhone" : "This browser can't write NFC.";
+  $("#burnIosOpen").href = `scholartap-nfc://write?auto=1&url=${encodeURIComponent($("#burnUrl").value)}`;
+  if (CONFIG.iosApp) { $("#burnIosGet").href = CONFIG.iosApp; $("#burnIosGet").hidden = false; }
   $("#burnVerify").hidden = !canNfc();
-  burnState("", canNfc() ? "Tap to start" : "Not supported here");
+  burnState("", canNfc() ? "Tap to start" : ios ? "Burn with the app" : "Not supported here");
 }
 function stopBurn() { burnCtl?.abort(); burnCtl = null; }
 async function burn() {
-  if (!canNfc()) { $("#burnNoNfc").scrollIntoView({ behavior: "smooth" }); return; }
+  if (!canNfc()) { if (!$("#burnIos").hidden) { $("#burnIosOpen").click(); return; } $("#burnNoNfc").scrollIntoView({ behavior: "smooth" }); return; }
   if (burnCtl) { stopBurn(); return burnState("", "Tap to start", "Stopped"); }
   const url = normCard($("#burnUrl").value.split("?")[0]) ? $("#burnUrl").value.trim() : null;
   if (!url) return toast("That link doesn't look right");
@@ -484,6 +489,12 @@ async function verifyTag() {
 }
 $("#burnBtn").onclick = burn;
 $("#burnVerify").onclick = verifyTag;
+$("#burnUrl").addEventListener("input", () => { $("#burnIosOpen").href = `scholartap-nfc://write?auto=1&url=${encodeURIComponent($("#burnUrl").value)}`; });
+// If the app isn't installed the custom link does nothing: still here after a moment → show the other routes.
+$("#burnIosOpen").addEventListener("click", () => {
+  const t = setTimeout(() => { if (!document.hidden) toast(CONFIG.iosApp ? "Get ScholarTap NFC first, or use NFC Tools" : "ScholarTap NFC isn't installed: use NFC Tools below"); }, 1600);
+  addEventListener("pagehide", () => clearTimeout(t), { once: true }); document.addEventListener("visibilitychange", () => clearTimeout(t), { once: true });
+});
 $("#burnCopy").onclick = async () => { try { await navigator.clipboard.writeText($("#burnUrl").value); toast("Link copied: paste it into NFC Tools"); } catch { prompt("Copy your link:", $("#burnUrl").value); } };
 $("#aNfc").onclick = (e) => { e.preventDefault(); show("nfc"); };
 

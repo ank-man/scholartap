@@ -181,8 +181,13 @@
       <button class="btn" type="button" id="burnVerify">Check a card: read what's on it</button>
     </div>
     <div class="card" id="burnNoNfc" hidden>
-      <b>This browser can't write NFC.</b>
-      <p class="fine">Writing works in Chrome on Android. On iPhone, copy your link and write it with the free <b>NFC Tools</b> app (Write → Add a record → URL). Any iPhone can <em>read</em> your card with no app.</p>
+      <b id="burnNoTitle">This browser can't write NFC.</b>
+      <div class="stack tight" id="burnIos" hidden>
+        <p class="fine">iPhone browsers can't write NFC, so burning uses the <b>ScholarTap NFC</b> app. It opens with your link filled in.</p>
+        <a class="btn primary" id="burnIosOpen"><span class="i" data-i="nfc"></span>Burn with ScholarTap NFC</a>
+        <a class="btn small" id="burnIosGet" hidden target="_blank" rel="noopener">Get the ScholarTap NFC app</a>
+      </div>
+      <p class="fine" id="burnAlt">Writing works in Chrome on Android. On iPhone you can also copy your link and write it with the free <b>NFC Tools</b> app (Write → Add a record → URL). Any iPhone can <em>read</em> your card with no app.</p>
       <button class="btn small" type="button" id="burnCopy">Copy my link</button>
     </div>
     <p class="fine">Tip: NTAG213/215 cards and stickers cost about $1. Your link never changes, so a burned card keeps working when you edit your ScholarTap.</p>
