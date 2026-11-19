@@ -54,6 +54,17 @@ export const MOTIFS = {
   brush: (c, o) => fillTile(140, 140, `<path d="M10 40c30-20 60 10 90-10 10-6 20-4 30 2-30 20-60-6-90 14-12 8-24 6-30-6Z"/><circle cx="110" cy="100" r="14"/><path d="M20 110l30-30 10 10-30 30Z"/>`, c, o),
   halftone: (c, o) => fillTile(16, 16, `<circle cx="4" cy="4" r="1.6"/><circle cx="12" cy="12" r="1.6"/>`, c, o),
   sound: (c, o) => tile(120, 60, [6, 14, 22, 30, 38, 46, 54, 62, 70, 78, 86, 94, 102, 110].map((x, i) => { const h = [6, 14, 24, 10, 30, 18, 8, 22, 34, 14, 6, 20, 12, 4][i]; return `<path d="M${x} ${30 - h}V${30 + h}" stroke-width="3"/>`; }).join(""), c, o),
+  // Added majors
+  pulse: (c, o) => tile(140, 60, `<path d="M0 32h30l6-12 8 26 8-34 8 28 6-8h74"/>`, c, o),
+  virus: (c, o) => tile(110, 110, `<g transform="translate(34 36)"><circle r="12"/>` + [0, 45, 90, 135, 180, 225, 270, 315].map((a) => `<path d="M0-12v-7" transform="rotate(${a})"/><circle cy="-21" r="2" transform="rotate(${a})"/>`).join("") + `</g><g transform="translate(82 82)"><circle r="7"/>` + [0, 60, 120, 180, 240, 300].map((a) => `<path d="M0-7v-5" transform="rotate(${a})"/>`).join("") + `</g>`, c, o),
+  network: (c, o) => tile(120, 120, `<path d="M20 24 62 40 100 18M62 40 50 86 96 96M62 40 96 96M20 24 14 72 50 86"/>` + [[20, 24], [62, 40], [100, 18], [50, 86], [96, 96], [14, 72]].map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${i === 1 ? 6 : 4}"/>`).join(""), c, o),
+  egg: (c, o) => tile(80, 80, `<path d="M22 12c-8 0-13 13-13 21 0 8 6 13 13 13s13-5 13-13c0-8-5-21-13-21Z"/><path d="M60 38c-6 0-10 10-10 16 0 6 4 10 10 10s10-4 10-10c0-6-4-16-10-16Z"/>`, c, o),
+  film: (c, o) => tile(60, 60, `<rect x="6" y="0" width="48" height="60"/>` + [6, 22, 38, 54].map((y) => `<rect x="9" y="${y - 3}" width="5" height="6" rx="1"/><rect x="46" y="${y - 3}" width="5" height="6" rx="1"/>`).join("") + `<path d="M18 4h24v24H18zM18 32h24v24H18z" stroke-opacity='${o * 0.6}'/>`, c, o),
+  weave: (c, o) => tile(32, 32, `<path d="M0 8h16M16 24h16M8 0v16M24 16v16" stroke-width="5" stroke-opacity='${o * 0.8}'/><path d="M16 8h16M0 24h16M8 16v16M24 0v16" stroke-width="5" stroke-opacity='${o * 0.4}'/>`, c, o),
+  hearts: (c, o) => tile(90, 90, `<path d="M24 34c-6-6-14-2-14 5 0 8 14 16 14 16s14-8 14-16c0-7-8-11-14-5Z"/><circle cx="64" cy="60" r="7"/><circle cx="76" cy="66" r="5"/><path d="M57 82c1-8 13-8 14 0M71 84c1-6 9-6 10 0"/>`, c, o),
+  laurel: (c, o) => tile(100, 100, `<path d="M50 84C30 74 22 54 26 30M50 84C70 74 78 54 74 30"/>` + [36, 48, 60, 72].map((y, i) => `<ellipse cx="${30 + i * 2}" cy="${y}" rx="6" ry="3" transform="rotate(-40 ${30 + i * 2} ${y})"/><ellipse cx="${70 - i * 2}" cy="${y}" rx="6" ry="3" transform="rotate(40 ${70 - i * 2} ${y})"/>`).join(""), c, o),
+  cloud: (c, o) => tile(130, 90, `<path d="M20 50a12 12 0 0 1 4-23 16 16 0 0 1 30-4 11 11 0 0 1 14 12 9 9 0 0 1-2 15Z"/><path d="M84 74h36M92 82h22" stroke-opacity='${o * 0.6}'/><path d="M30 64l-4 8M44 64l-4 8M58 64l-4 8" stroke-opacity='${o * 0.7}'/>`, c, o),
+  shield: (c, o) => tile(80, 80, `<path d="M24 8 40 14v12c0 10-7 17-16 20-9-3-16-10-16-20V14Z"/><path d="M18 26l5 5 9-10"/><text x="46" y="70" font-family="monospace" font-size="12" fill="${c}" fill-opacity="${o}" stroke="none">0x1f</text>`, c, o),
   diagonal: (c, o) => tile(20, 20, `<path d="M0 20 20 0" stroke-width="1"/>`, c, o)
 };
 

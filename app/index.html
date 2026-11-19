@@ -369,7 +369,7 @@
           <p class="lede">ScholarTap is the free digital business card for graduate and professional students. Your CV, publications and links, shared by NFC tap, QR code, or straight from Apple, Google and Samsung Wallet.</p>
           <div class="hero-ctas">
             <button class="btn primary xl" type="button" data-start="new">Create your free card <span aria-hidden="true">→</span></button>
-            <a class="btn xl" href="#templates">Browse 51 templates</a>
+            <a class="btn xl" href="#templates">Browse 76 templates</a>
           </div>
           <p class="resume" id="resumeHint" hidden>📝 You have an unfinished card. <a href="#" id="resume">Continue where you left off</a> · <a href="#" id="discard">discard</a></p>
           <ul class="trust">
@@ -402,7 +402,7 @@
 
     <section class="strip">
       <div class="wrap strip-in">
-        <div class="stat"><b>51</b><span>templates</span></div>
+        <div class="stat"><b>76</b><span>templates</span></div>
         <div class="stat"><b>11</b><span>fields of study</span></div>
         <div class="stat"><b>3</b><span>wallets supported</span></div>
         <div class="stat"><b>$0</b><span>to use, forever</span></div>
@@ -419,7 +419,7 @@
           <article class="feat"><div class="ficon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></div><h3>CV &amp; publications</h3><p>Your CV PDF, selected papers, projects, education and awards, always up to date.</p></article>
           <article class="feat"><div class="ficon"><svg viewBox="0 0 24 24"><path d="M6 8.3a6 6 0 0 1 0 7.4M9.5 5.5a10 10 0 0 1 0 13M13 3a14 14 0 0 1 0 18"/><circle cx="3" cy="12" r="1"/></svg></div><h3>NFC &amp; QR</h3><p>Program any $1 NFC card from your phone, or print the QR on posters and badges.</p></article>
           <article class="feat"><div class="ficon"><svg viewBox="0 0 24 24"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M16 14h.01"/></svg></div><h3>Apple, Google &amp; Samsung Wallet</h3><p>Keep your card next to your boarding passes. Show the QR from your lock screen.</p></article>
-          <article class="feat"><div class="ficon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></div><h3>A design for your field</h3><p>51 templates, from entomology and chemistry to law, music and medicine. Switch any time.</p></article>
+          <article class="feat"><div class="ficon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></div><h3>A design for your field</h3><p>76 templates, from entomology and chemistry to law, music and medicine. Switch any time.</p></article>
           <article class="feat"><div class="ficon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><h3>Yours, not ours</h3><p>Hosted free on your own GitHub. Your data, your link, no ads, no subscription.</p></article>
         </div>
       </div>
@@ -456,7 +456,7 @@
 
     <section class="sec showcase" id="templates">
       <div class="wrap">
-        <p class="eyebrow">51 templates</p>
+        <p class="eyebrow">76 templates</p>
         <h2 class="h2">A card that looks like your field.</h2>
         <p class="sub">Every design carries a motif from its discipline: DNA helices, circuit traces, beetles, music staves, classical columns. Tap one to start with it.</p>
         <div class="field-chips" id="fieldChips"></div>
@@ -1240,7 +1240,7 @@
     const rows = [cat.themes.slice(0, half), cat.themes.slice(half)];
     ["#marqueeA", "#marqueeB"].forEach((sel, i) => { const html = rows[i].map(shot).join(""); $(sel + " .track").innerHTML = html + html.replace(/<button /g, '<button tabindex="-1" aria-hidden="true" '); });
     const groups = [...new Set(cat.themes.map((t) => t.group))].filter((g) => g !== "General");
-    $("#fieldChips").innerHTML = groups.map((g) => `<button type="button" data-field-group="${g}">${g}</button>`).join("") + `<button type="button" data-field-group="">See all 51 →</button>`;
+    $("#fieldChips").innerHTML = groups.map((g) => `<button type="button" data-field-group="${g}">${g}</button>`).join("") + `<button type="button" data-field-group="">See all 76 →</button>`;
     $("#landing").addEventListener("click", (e) => {
       const s = e.target.closest("[data-tpl]"); if (s) return begin("new", { template: s.dataset.tpl });
       const g = e.target.closest("[data-field-group]"); if (g) return begin("new", { step: "template", group: g.dataset.fieldGroup });
