@@ -178,6 +178,7 @@ function renderMe() {
   setupWallet(m);
   renderStats();
   installHint();
+  pushHint();
 }
 
 async function setupWallet(m) {
@@ -186,10 +187,12 @@ async function setupWallet(m) {
   let w = {};
   try { const r = await fetch(new URL("wallet/wallet.json", m.card), { cache: "no-store" }); if (r.ok) w = await r.json(); } catch {}
   const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  const link = (ios ? w.apple : w.google || w.samsung) || w.apple || w.google || w.samsung
-    || (FEATURES.googleWallet && !ios ? `${relayUrl()}/wallet/google?card=${encodeURIComponent(m.card)}` : "");
+  const enc = encodeURIComponent(m.card);
+  if (!w.apple && FEATURES.appleWallet) w.apple = `${relayUrl()}/wallet/apple?card=${enc}`;
+  if (!w.google && FEATURES.googleWallet) w.google = `${relayUrl()}/wallet/google?card=${enc}`;
+  const link = ios ? w.apple : (w.google || w.samsung || w.apple);
   if (link) { a.href = link; a.removeAttribute("aria-disabled"); a.onclick = null; }
-  else a.onclick = (e) => { e.preventDefault(); toast(ios ? "No Apple pass yet. Try Lock screen: your QR on your wallpaper" : "Wallet pass isn't set up for this card yet"); };
+  else a.onclick = (e) => { e.preventDefault(); toast(ios ? "Apple Wallet isn't switched on yet. Use Lock screen: your QR on your wallpaper" : "Wallet pass isn't set up for this card yet"); };
 }
 
 async function renderStats() {
@@ -207,6 +210,36 @@ async function renderStats() {
     $("#stats").hidden = false;
   } catch { $("#stats").hidden = true; }
 }
+
+// ---------- tap alerts (Web Push; iOS needs the home-screen app) ----------
+const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+async function pushHint() {
+  const card = $("#pushCard");
+  if (!signedIn() || !FEATURES.push || !("serviceWorker" in navigator)) { card.hidden = true; return; }
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  card.hidden = false;
+  if (!("PushManager" in window) || (ios && !standalone())) {
+    $("#pushHow").textContent = ios ? "On iPhone, add ScholarTap to your Home Screen first (Share → Add to Home Screen), then open it from there and turn alerts on." : "This browser can't show notifications.";
+    $("#pushBtn").hidden = true; return;
+  }
+  const reg = await navigator.serviceWorker.ready;
+  const sub = await reg.pushManager.getSubscription();
+  $("#pushBtn").hidden = false;
+  $("#pushBtn").textContent = sub ? "Tap alerts are on · turn off" : "Turn on tap alerts";
+  $("#pushHow").textContent = sub ? "You'll get a notification whenever someone swaps cards with you." : "Works on iPhone (iOS 16.4+, from the home-screen app), Android and computers.";
+}
+$("#pushBtn").onclick = async () => {
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    if (sub) { await api("/push", { method: "DELETE", body: { endpoint: sub.endpoint } }).catch(() => {}); await sub.unsubscribe(); toast("Tap alerts off"); return pushHint(); }
+    if ((await Notification.requestPermission()) !== "granted") return toast("Notifications are blocked. Allow them in Settings.");
+    const key = Uint8Array.from(atob(FEATURES.vapid.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+    const s = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+    await api("/push", { method: "POST", body: { endpoint: s.endpoint } });
+    buzz(); toast("Tap alerts on 🔔"); pushHint();
+  } catch (e) { toast(e.message || "Couldn't turn on alerts"); }
+};
 
 let deferredInstall = null;
 addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredInstall = e; installHint(); });
@@ -640,7 +673,7 @@ async function boot() {
   const params = new URLSearchParams(location.search);
   if (params.get("relay")) ls.set(K.relay, params.get("relay"));
   try { CONFIG = { ...CONFIG, ...(await (await fetch("config.json", { cache: "no-cache" })).json()) }; } catch {}
-  if (relayUrl()) { try { FEATURES = (await (await fetch(relayUrl() + "/")).json()).features || {}; } catch { FEATURES = {}; } }
+  if (relayUrl()) { try { const r = await (await fetch(relayUrl() + "/")).json(); FEATURES = { ...(r.features || {}), vapid: r.vapidPublicKey }; } catch { FEATURES = {}; } }
   $("#signGithub").hidden = !FEATURES.github;
   $("#tokenBox").hidden = !FEATURES.token;
   $(".or span").textContent = FEATURES.token ? "or, no account" : "start with your card";

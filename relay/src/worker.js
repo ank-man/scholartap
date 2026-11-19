@@ -12,15 +12,19 @@
 
 import { makeStore } from "./store.js";
 import { googleWalletLink } from "./wallet-google.js";
+import { applePass, appleReady } from "./wallet-apple.js";
+import { notify, pushReady, validEndpoint } from "./push.js";
 
 const MAX_BODY = 600_000;
 const DAY = 86_400;
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     try {
       if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }));
       const store = env.__store || makeStore(env.DB);
+      // Push pings run after the response; tests and the local server collect them in env.__later.
+      env.__defer = (p) => (ctx?.waitUntil ? ctx.waitUntil(p) : (env.__later ||= []).push(p));
       const res = await route(request, env, store);
       return cors(res);
     } catch (e) {
@@ -56,7 +60,7 @@ async function route(request, env, store) {
   const p = url.pathname.replace(/\/+$/, "") || "/";
   const m = request.method;
 
-  if (p === "/" && m === "GET") return json({ ok: true, name: "ScholarTap relay", features: features(env) });
+  if (p === "/" && m === "GET") return json({ ok: true, name: "ScholarTap relay", features: features(env), vapidPublicKey: pushReady(env) ? env.VAPID_PUBLIC_KEY : undefined });
 
   if (p === "/auth/github" && m === "GET") return authStart(url, env);
   if (p === "/auth/github/callback" && m === "GET") return authCallback(url, env, store);
@@ -66,6 +70,7 @@ async function route(request, env, store) {
   if (p === "/guest" && m === "POST") return guest(request, env, store);
   if (p === "/card" && m === "GET") return publicCard(url, env);
   if (p === "/wallet/google" && m === "GET") return wallet(url, env);
+  if (p === "/wallet/apple" && m === "GET") return walletApple(url, env);
 
   // everything below needs a session
   const me = await session(request, env);
@@ -76,6 +81,14 @@ async function route(request, env, store) {
   if (p.startsWith("/inbox/") && m === "DELETE") { await store.deleteTap(me.login, p.slice(7)); return json({ ok: true }); }
   if (p === "/contacts" && m === "GET") return json(await store.getContacts(me.login) || { items: [], updated: 0 });
   if (p === "/contacts" && m === "PUT") return putContacts(request, store, me);
+  if (p === "/push" && m === "POST") {
+    if (!pushReady(env)) fail(501, "Notifications aren't set up on this relay");
+    const ep = validEndpoint((await body(request)).endpoint);
+    if (!ep) fail(400, "Not a browser push subscription");
+    await store.addPushSub(me.login, ep);
+    return json({ ok: true });
+  }
+  if (p === "/push" && m === "DELETE") { const ep = validEndpoint((await body(request)).endpoint); if (ep) await store.deletePushSub(me.login, ep); return json({ ok: true }); }
   if (p === "/stats" && m === "GET") return json(await store.stats(me.login, now() - 30 * DAY));
   fail(404, "Not found");
 }
@@ -84,7 +97,9 @@ function features(env) {
   return {
     github: Boolean(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET),
     token: true,
-    googleWallet: Boolean(env.GOOGLE_WALLET_ISSUER_ID && env.GOOGLE_WALLET_SA_KEY)
+    googleWallet: Boolean(env.GOOGLE_WALLET_ISSUER_ID && env.GOOGLE_WALLET_SA_KEY),
+    appleWallet: appleReady(env),
+    push: pushReady(env)
   };
 }
 
@@ -265,6 +280,7 @@ async function tap(request, env, store, me) {
     kind: "tap", created: now()
   };
   const id = await store.addTap(row, 600);
+  if (id === row.id) env.__defer?.(notify(store, to.owner, env));   // not for a refreshed repeat tap
   return json({ ok: true, id, to: to.url, owner: to.owner, mutual: await store.hasTapped(to.owner, me.login) });
 }
 
@@ -288,6 +304,7 @@ async function guest(request, env, store) {
     name, title: clip(b.title, 120), photo: "", email, phone,
     note: clip(b.note, 500), event: clip(b.event, 120), kind: "guest", created: now()
   }, 0);
+  env.__defer?.(notify(store, to.owner, env));
   return json({ ok: true });
 }
 
@@ -316,4 +333,15 @@ async function wallet(url, env) {
   const card = await fetchCard(c.url, env);
   if (!card) fail(404, "Card not found");
   return Response.redirect(await googleWalletLink(card, c.url, env), 302);
+}
+
+async function walletApple(url, env) {
+  if (!appleReady(env)) fail(501, "Apple Wallet isn't set up on this relay");
+  const c = parseCard(url.searchParams.get("card"));
+  if (!c) fail(400, "That isn't a ScholarTap card link");
+  const card = await fetchCard(c.url, env);
+  if (!card) fail(404, "Card not found");
+  const bytes = await applePass(card, c.url, env);
+  const name = (clip(card.name, 60) || "card").replace(/[^\w.-]+/g, "-").toLowerCase();
+  return new Response(bytes, { headers: { "content-type": "application/vnd.apple.pkpass", "content-disposition": `attachment; filename="${name}.pkpass"`, "cache-control": "no-store" } });
 }

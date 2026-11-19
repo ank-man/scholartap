@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS views (owner TEXT NOT NULL, card TEXT NOT NULL, day T
   PRIMARY KEY (card, day, via));
 CREATE INDEX IF NOT EXISTS views_owner ON views (owner, day);
 CREATE TABLE IF NOT EXISTS rates (key TEXT PRIMARY KEY, n INTEGER NOT NULL, reset INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS push_subs (endpoint TEXT PRIMARY KEY, login TEXT NOT NULL, created INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS push_login ON push_subs (login);
 `;
 
 const now = () => Math.floor(Date.now() / 1000);
@@ -86,6 +88,14 @@ export function makeStore(dbOrAdapter) {
       const taps = await q.first("SELECT COUNT(*) AS n, SUM(kind = 'guest') AS guests FROM taps WHERE to_owner = ? AND created >= ?", owner, sinceTs);
       return { views, taps: Number(taps?.n || 0), guests: Number(taps?.guests || 0) };
     },
+
+    async addPushSub(login, endpoint) {
+      await q.run("INSERT INTO push_subs (endpoint, login, created) VALUES (?, ?, ?) ON CONFLICT(endpoint) DO UPDATE SET login = excluded.login, created = excluded.created", endpoint, login, now());
+      const subs = await q.all("SELECT endpoint FROM push_subs WHERE login = ? ORDER BY created DESC", login);
+      for (const s of subs.slice(10)) await q.run("DELETE FROM push_subs WHERE endpoint = ?", s.endpoint);   // 10 devices max
+    },
+    pushSubs: (login) => q.all("SELECT endpoint FROM push_subs WHERE login = ?", login),
+    deletePushSub: (login, endpoint) => q.run("DELETE FROM push_subs WHERE login = ? AND endpoint = ?", login, endpoint),
 
     // Fixed-window counter. Returns true while under `max` hits per `windowSec`.
     async rate(key, windowSec, max) {

@@ -255,6 +255,7 @@
     try { const r = await fetch("wallet/wallet.json", { cache: "no-store" }); if (r.ok) w = await r.json(); } catch (_) {}
     // No Google keys on this card? The shared ScholarTap relay can sign the pass instead.
     if (!w.google && hub?.relay && hub.features?.googleWallet) w.google = `${hub.relay}/wallet/google?card=${encodeURIComponent(cardUrl(card))}`;
+    if (!w.apple && hub?.relay && hub.features?.appleWallet) w.apple = `${hub.relay}/wallet/apple?card=${encodeURIComponent(cardUrl(card))}`;
     let any = false;
     btns.forEach((b) => {
       const url = w[b.dataset.wallet];

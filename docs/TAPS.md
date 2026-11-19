@@ -34,7 +34,34 @@ with IPs hashed). Nothing else.
 - **Burn NFC**: Web NFC (Chrome on Android). Writes `<card>?via=nfc`, with verify, batch mode and optional permanent lock.
   On iPhone it shows NFC Tools instructions. Any iPhone can *read* the cards.
 - **Install**: manifest shortcuts (My QR, Scan, Burn NFC, Taps), share target (share a card link to Taps to open it), app badge for new taps.
-- **Wallet**: uses the card's own passes (`wallet/wallet.json`), otherwise the relay's shared Google Wallet issuer.
+- **Wallet**: uses the card's own passes (`wallet/wallet.json`), otherwise the relay signs them centrally:
+  **Apple Wallet** (`/wallet/apple`, one Pass Type ID certificate for every card) and **Google Wallet** (`/wallet/google`).
+- **Tap alerts**: Web Push without a payload (no push vendor, free). iPhone: iOS 16.4+, from the Home Screen app.
+  Android and desktop: any modern browser.
+
+## iPhone support
+
+| Feature | iPhone |
+|---|---|
+| Card, Save contact, Share, QR | Safari, no app |
+| Swap cards, inbox, saved taps, export | Safari or the Home Screen app |
+| QR scanner | Safari camera (jsQR) |
+| Full-screen QR, lock-screen wallpaper | Yes (screen wake lock on iOS 16.4+) |
+| Tap alerts and app badge | Home Screen app, iOS 16.4+ |
+| Apple Wallet pass | Relay with `APPLE_*` secrets (one Apple Developer account for everyone) |
+| Write NFC cards | ScholarTap NFC app (`ios/`), or the free NFC Tools app. Safari can't write NFC. Reading works with no app |
+
+## Cost: $0 a month
+
+| Piece | Service | Cost |
+|---|---|---|
+| Cards, setup app, Taps app | GitHub Pages | $0 |
+| Relay + database | Cloudflare Workers Free + D1 Free (100,000 requests/day, 10 ms CPU per request, 5 GB) | $0 |
+| Sign-in, tap alerts, Google Wallet | GitHub OAuth, Web Push (VAPID), Google Wallet API | $0 |
+| Apple Wallet + iOS NFC app | An Apple Developer account: UGA's, or $99/year | $0 to $99/year |
+
+If usage ever passes the free limits, the Workers Paid plan is $5/month. The relay also runs as plain
+Node.js + SQLite (`npm run relay`) on any free VM, such as an EITS VM, with no code changes.
 
 ## Deploy the relay (Cloudflare, free tier)
 
@@ -53,8 +80,10 @@ Optional:
 
 - **Sign in with GitHub**: create a GitHub OAuth App with callback `<relay>/auth/github/callback`, then
   `wrangler secret put GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
+- **Tap alerts**: `npm run vapid`, then `wrangler secret put VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`.
 - **Google Wallet for every card**: `GOOGLE_WALLET_ISSUER_ID` and `GOOGLE_WALLET_SA_KEY` (see `WALLET-SETUP.md`).
-  Apple Wallet still needs per-build signing (`scripts/wallet-apple.mjs`).
+- **Apple Wallet for every card**: the five `APPLE_*` secrets from `WALLET-SETUP.md`. Store the key unencrypted as
+  PKCS#8 (`openssl pkcs8 -topk8 -nocrypt -in signerKey.pem -out signerKey.pk8.pem`) so signing fits the free plan's CPU limit.
 
 ## Local development
 

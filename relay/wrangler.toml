@@ -16,6 +16,10 @@ binding = "DB"
 database_name = "scholartap"
 database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
 
-# Optional secrets (npx wrangler secret put NAME):
-#   GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET   one-tap "Sign in with GitHub" (OAuth app; callback <relay>/auth/github/callback)
-#   GOOGLE_WALLET_ISSUER_ID, GOOGLE_WALLET_SA_KEY   "Save to Google Wallet" on every card, no per-student keys
+# Runs on the Workers FREE plan (100,000 requests/day, D1 5 GB). Cost: $0.
+# Optional secrets (npx wrangler secret put NAME), all free to obtain:
+#   GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET          one-tap "Sign in with GitHub" (OAuth app; callback <relay>/auth/github/callback)
+#   VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY             tap alerts on iPhone/Android/desktop (`npm run vapid` makes them)
+#   GOOGLE_WALLET_ISSUER_ID, GOOGLE_WALLET_SA_KEY   "Save to Google Wallet" on every card
+#   APPLE_PASS_TYPE_ID, APPLE_TEAM_ID, APPLE_SIGNER_CERT, APPLE_SIGNER_KEY (unencrypted PKCS#8: fastest),
+#   APPLE_WWDR_CERT                                 "Add to Apple Wallet" on every card, from ONE Apple Developer account

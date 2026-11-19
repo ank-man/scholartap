@@ -30,6 +30,7 @@ so you can print it on QR codes and NFC tags. To change anything later, open **`
 | ⇄ **Swap cards** | A floating *Swap cards* button on every card. Both people keep each other's card, and mutual swaps are flagged |
 | 📥 **Taps inbox** | See who tapped you, where you met and their note. People without a card can leave their details |
 | 🔥 **Burn NFC cards** | Write your link to a blank NFC card right from the Taps app (Chrome on Android), with verify, batch and lock |
+| 🔔 **Tap alerts** | A notification when someone taps you: iPhone (Home Screen app, iOS 16.4+), Android, desktop |
 | 📲 **Lock-screen QR, home-screen app** | One-tap QR wallpaper, full-screen QR with screen wake lock, installable app with Scan / My QR / NFC shortcuts |
 
 ## Taps: 👉 https://ank-man.github.io/scholartap/taps/
@@ -69,6 +70,7 @@ npm run catalog                   # after editing kit/themes.mjs or templates/la
 npm run relay                     # Taps relay on http://localhost:8787 (node:sqlite, Node 22.5+)
 npm run taps                      # Taps app; add ?relay=http://localhost:8787 once to use the local relay
 npm test                          # relay tests
+npm run vapid                     # key pair for tap alerts (push notifications)
 ```
 
 ## For GSA Connect

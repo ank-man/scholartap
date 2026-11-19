@@ -1,6 +1,6 @@
 {
   "name": "scholartap",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "ScholarTap: free digital business cards for graduate students. An initiative of GSA Connect, UGA Graduate Student Association.",
   "type": "module",
@@ -14,11 +14,14 @@
     "taps": "node scripts/dev.mjs --open taps/",
     "relay": "node relay/local.mjs",
     "test": "node --test relay/test/*.test.mjs",
-    "relay:deploy": "cd relay && npx wrangler deploy"
+    "relay:deploy": "cd relay && npx wrangler deploy",
+    "vapid": "node relay/vapid.mjs"
   },
   "dependencies": {
+    "fflate": "^0.8.2",
     "jose": "^5.9.6",
     "jsonwebtoken": "^9.0.2",
+    "node-forge": "^1.3.1",
     "passkit-generator": "^3.3.1",
     "qrcode": "^1.5.4"
   },

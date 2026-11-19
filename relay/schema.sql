@@ -13,3 +13,5 @@ CREATE TABLE IF NOT EXISTS views (owner TEXT NOT NULL, card TEXT NOT NULL, day T
   PRIMARY KEY (card, day, via));
 CREATE INDEX IF NOT EXISTS views_owner ON views (owner, day);
 CREATE TABLE IF NOT EXISTS rates (key TEXT PRIMARY KEY, n INTEGER NOT NULL, reset INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS push_subs (endpoint TEXT PRIMARY KEY, login TEXT NOT NULL, created INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS push_login ON push_subs (login);

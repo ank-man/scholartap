@@ -154,3 +154,82 @@ test("Google Wallet link is a valid RS256 JWT carrying the card QR", async () =>
   assert.equal(obj.barcode.value, "https://jordan.github.io/");
   assert.equal(obj.header.defaultValue.value, "Jordan Dawgson");
 });
+
+test("Apple Wallet pass: valid zip, manifest hashes, detached PKCS#7 signature", async () => {
+  const forge = (await import("node-forge")).default;
+  const { unzipSync, strFromU8 } = await import("fflate");
+  const { createHash } = await import("node:crypto");
+  const mk = (cn, issuer, signKey, pub, ca) => {
+    const c = forge.pki.createCertificate(); c.publicKey = pub; c.serialNumber = String(Math.floor(Math.random() * 1e9));
+    c.validity.notBefore = new Date(); c.validity.notAfter = new Date(Date.now() + 864e5);
+    c.setSubject([{ name: "commonName", value: cn }]); c.setIssuer([{ name: "commonName", value: issuer }]);
+    if (ca) c.setExtensions([{ name: "basicConstraints", cA: true }]);
+    c.sign(signKey, forge.md.sha256.create()); return c;
+  };
+  const caKeys = forge.pki.rsa.generateKeyPair(2048), sKeys = forge.pki.rsa.generateKeyPair(2048);
+  const wwdr = mk("Test WWDR", "Test WWDR", caKeys.privateKey, caKeys.publicKey, true);
+  const signer = mk("Pass Type ID: pass.test", "Test WWDR", caKeys.privateKey, sKeys.publicKey, false);
+  const png = Buffer.from("89504e470d0a1a0a0000000d4948445200000001000000010806000000", "hex");
+  const { call, env } = setup({
+    APPLE_PASS_TYPE_ID: "pass.test", APPLE_TEAM_ID: "ABCDE12345",
+    APPLE_SIGNER_CERT: forge.pki.certificateToPem(signer), APPLE_SIGNER_KEY: forge.pki.privateKeyToPem(sKeys.privateKey), APPLE_WWDR_CERT: forge.pki.certificateToPem(wwdr)
+  });
+  const inner = env.__fetch;
+  env.__fetch = async (u, i) => String(u).endsWith(".png") && String(u).includes("jordan.github.io") ? new Response(png) : inner(u, i);
+  assert.equal((await call("GET", "/")).data.features.appleWallet, true);
+  const r = await worker.fetch(new Request("https://relay.test/wallet/apple?card=" + encodeURIComponent("https://jordan.github.io/")), env);
+  assert.equal(r.status, 200);
+  assert.equal(r.headers.get("content-type"), "application/vnd.apple.pkpass");
+  const files = unzipSync(new Uint8Array(await r.arrayBuffer()));
+  for (const f of ["pass.json", "manifest.json", "signature", "icon.png"]) assert.ok(files[f], f);
+  const manifest = JSON.parse(strFromU8(files["manifest.json"]));
+  for (const [name, hash] of Object.entries(manifest)) assert.equal(createHash("sha1").update(files[name]).digest("hex"), hash, name);
+  const pass = JSON.parse(strFromU8(files["pass.json"]));
+  assert.equal(pass.passTypeIdentifier, "pass.test");
+  assert.equal(pass.generic.primaryFields[0].value, "Jordan Dawgson");
+  assert.equal(pass.barcodes[0].message, "https://jordan.github.io/?via=qr");
+  // signature: detached PKCS#7 over manifest.json, signed by the signer cert, verified with node-forge
+  const p7 = forge.pkcs7.messageFromAsn1(forge.asn1.fromDer(forge.util.createBuffer(Buffer.from(files.signature).toString("binary"))));
+  assert.equal(p7.certificates.length, 2);
+  const attrs = p7.rawCapture.signerInfos[0].value.find((v) => v.tagClass === forge.asn1.Class.CONTEXT_SPECIFIC && v.type === 0);
+  const digestAttr = attrs.value.find((a) => forge.asn1.derToOid(a.value[0].value) === forge.pki.oids.messageDigest);
+  const md = forge.md.sha256.create(); md.update(Buffer.from(files["manifest.json"]).toString("binary"));
+  assert.equal(digestAttr.value[1].value[0].value, md.digest().getBytes());
+  const sig = p7.rawCapture.signerInfos[0].value.at(-1).value;
+  const signed = forge.asn1.toDer(Object.assign({}, attrs, { tagClass: forge.asn1.Class.UNIVERSAL, type: forge.asn1.Type.SET })).getBytes();
+  const md2 = forge.md.sha256.create(); md2.update(signed);
+  assert.ok(sKeys.publicKey.verify(md2.digest().getBytes(), sig));
+});
+
+test("push: subscribe, tap sends a signed VAPID ping to the push service, dead endpoints pruned", async () => {
+  const k = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+  const pub = Buffer.from(await crypto.subtle.exportKey("raw", k.publicKey)).toString("base64url");
+  const d = (await crypto.subtle.exportKey("jwk", k.privateKey)).d;
+  const { call, env } = setup({ VAPID_PUBLIC_KEY: pub, VAPID_PRIVATE_KEY: d });
+  const sent = [];
+  const inner = env.__fetch;
+  env.__fetch = async (u, i) => { if (String(u).includes("push.apple.com")) { sent.push({ u: String(u), h: i.headers }); return new Response(null, { status: sent.length > 1 ? 410 : 201 }); } return inner(u, i); };
+  const root = (await call("GET", "/")).data;
+  assert.equal(root.features.push, true); assert.equal(root.vapidPublicKey, pub);
+  const a = await login(call, "ghp_alex"), j = await login(call, "ghp_jordan");
+  assert.equal((await call("POST", "/push", { token: j, body: { endpoint: "https://evil.example/steal" } })).status, 400);
+  assert.equal((await call("POST", "/push", { token: j, body: { endpoint: "https://web.push.apple.com/QGx1" } })).status, 200);
+  await call("POST", "/tap", { token: a, body: { to: "https://jordan.github.io/" } });
+  await Promise.all(env.__later || []);
+  assert.equal(sent.length, 1);
+  const auth = sent[0].h.authorization;
+  const [, jwt, key] = auth.match(/^vapid t=([^,]+), k=(.+)$/);
+  assert.equal(key, pub);
+  const [h, b, s] = jwt.split(".");
+  assert.equal(JSON.parse(Buffer.from(b, "base64url")).aud, "https://web.push.apple.com");
+  assert.ok(await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, k.publicKey, Buffer.from(s, "base64url"), new TextEncoder().encode(`${h}.${b}`)));
+  // repeat tap within 10 min: no second ping; a guest tap pings again, gets 410, and the endpoint is pruned
+  env.__later = [];
+  await call("POST", "/tap", { token: a, body: { to: "https://jordan.github.io/" } });
+  await Promise.all(env.__later); assert.equal(sent.length, 1);
+  await call("POST", "/guest", { body: { to: "https://jordan.github.io/", name: "Sam", email: "s@x.io" } });
+  await Promise.all(env.__later); assert.equal(sent.length, 2);
+  env.__later = [];
+  await call("POST", "/guest", { body: { to: "https://jordan.github.io/", name: "Kim", email: "k@x.io" } });
+  await Promise.all(env.__later); assert.equal(sent.length, 2);
+});
